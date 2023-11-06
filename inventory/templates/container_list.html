@@ -1,0 +1,70 @@
+{% extends "base.html" %}
+{% load widget_tweaks %}
+
+{% block title %} Container List {% endblock title %}
+<style>
+    .custom-card-title {
+        color: #FF5733; /* Change to your desired color */
+        font-size: 1.5rem; /* Change to your desired font size */
+        font-weight: bold; /* Change to your desired font weight */
+    }
+</style>
+{% block content %}
+<br>
+<div class="row" style="color: #4e4e4e; font-weight: bold; font-size: 3rem;">
+    <div class="col-md-8">Container List</div>
+    <div class="col-md-4">
+        <div style="float:right;">
+            <a class="btn btn-success" href="{% url 'add_container' %}">
+                <i class="fas fa-plus"></i> <!-- Plus Icon -->
+                Add Container
+            </a>
+        </div>
+    </div>
+</div>
+
+<div style="border-bottom: 1px solid white;"></div>
+
+<br>
+
+<input type="text" id="search-input" class="form-control" style="width: 300px;" placeholder="Search by name">
+
+
+<br>
+<div class="card-deck">
+    {% for container in containers %}
+        <div class="card">
+            <div class="card-body">
+                <h5 class="card-title " style="color: #FF5733;">{{ container.name }}</h5>
+                <p class="card-text">{{ container.description }}</p>
+            </div>
+            <div class="card-footer">
+                <a href="{% url 'inventory' %}" class="btn btn-info btn-sm">
+                    <i class="fas fa-eye"></i> <!-- View Icon -->
+                </a>
+            </div>
+        </div>
+    {% empty %}
+        <p class="text-center">No containers found.</p>
+    {% endfor %}
+</div>
+
+<script>
+    const searchInput = document.getElementById("search-input");
+    const cards = document.querySelectorAll(".card");
+
+    searchInput.addEventListener("input", () => {
+        const searchText = searchInput.value.trim().toLowerCase();
+
+        cards.forEach(card => {
+            const name = card.querySelector(".card-title").textContent.trim().toLowerCase();
+            if (name.includes(searchText)) {
+                card.style.display = "block";
+            } else {
+                card.style.display = "none";
+            }
+        });
+    });
+</script>
+
+{% endblock content %}

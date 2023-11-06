@@ -1,0 +1,132 @@
+{% extends "base.html" %}
+{% load widget_tweaks %}
+{% load custom_filters %}
+
+{% block title %} Inventory List {% endblock title %}
+
+{% block content %}
+
+<style>
+    .input-container {
+        margin-bottom: 20px; /* Add spacing below the input container */
+        max-width: 300px; 
+    }
+</style>
+
+<br>
+<div class="row" style="color: #4e4e4e; font-style: bold; font-size: 3rem;">
+    <div class="col-md-8">Inventory List</div>
+    <div class="col-md-4">
+        <div style="float:right;">
+            <a class="btn btn-success" href="{% url 'new-stock' %}">
+                <i class="fas fa-plus"></i> <!-- Plus Icon -->
+                Add New Stock
+            </a>
+        </div>
+    </div>
+</div>
+
+<div style="border-bottom: 1px solid white;"></div>
+
+<br>
+<div class="input-container">
+    <input type="text" id="search-container" class="form-control" placeholder="Search by Container Name">
+</div>
+
+
+{% if object_list %}
+    {% regroup object_list by container.name as container_list %}
+    <!-- Existing code... -->
+    {% for container in container_list %}
+    <button class="btn btn-success export-excel-btn" data-container="{{ container.grouper }}">
+        <i class="fas fa-file-excel"></i> <!-- Excel Icon -->
+    </button>
+    <table class="table table-css table-bordered table-hover">
+        <thead class="thead-dark align-middle">
+            <tr>
+                <th colspan="7" style="text-align: center;">
+                    <div class="container-name">
+                        Name of Container: {{ container.grouper }}
+                    </div>
+                </th>
+            </tr>
+            <tr>
+                <th width="20%">Stock Name</th>
+                <th width="7%">Current Stock in Inventory</th>
+                <th width="15%">Wood Type</th>
+                <th width="15%">Length</th>
+                <th width="15%">Width</th>
+                <th width="15%">Thickness</th>
+                <th width="5%">Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for stock in container.list %}
+            <tr>
+                <td>{{ stock.name }}</td>
+                <td>{{ stock.quantity }}</td>
+                <td>{{ stock.wood_type }}</td>
+                <td>{{ stock.length }}</td>
+                <td>{{ stock.width }}</td>
+                <td>{{ stock.thickness }}</td>
+                <td>
+                    <a href="{% url 'edit-stock' stock.pk %}" class="btn btn-info btn-sm">
+                        <i class="fas fa-edit"></i> <!-- Edit Icon -->
+                    </a>
+                    <a href="{% url 'delete-stock' stock.pk %}" class="btn btn-danger btn-sm">
+                        <i class="fas fa-trash"></i> <!-- Delete Icon -->
+                    </a>
+                </td>
+               
+                    
+                
+            </tr>
+            
+            {% endfor %}
+            <!-- Calculate and display the sum of quantity -->
+            <tr>
+                <td><strong>{{ container.list|length }}</strong></td>
+                <td><strong>{{ container.list|calculate_total_quantity }}</strong></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+            </tr>
+        </tbody>
+    </table>
+    
+    {% endfor %}
+    {% else %}
+    <div style="color: #575757; font-style: bold; font-size: 1.5rem; text-align: center;">The records are empty. Please try adding some.</div>
+    {% endif %}
+    <style>
+        .container-name {
+            background-color: #007BFF; /* Background color */
+            color: #FFFFFF; /* Text color */
+            padding: 10px; /* Padding around the container name */
+        }
+    </style>
+
+    <script>
+        const searchInput = document.getElementById("search-container");
+        const containers = document.querySelectorAll('.table');
+
+        searchInput.addEventListener("input", () => {
+            const searchText = searchInput.value.trim().toLowerCase();
+
+            containers.forEach(container => {
+                const containerName = container.querySelector('.container-name').textContent.trim().toLowerCase();
+                if (containerName.includes(searchText)) {
+                    container.style.display = "block";
+                } else {
+                    container.style.display = "none";
+                }
+            });
+        });
+    </script>
+    
+    
+    
+</div>
+{% endblock content %}

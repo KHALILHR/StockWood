@@ -1,0 +1,263 @@
+{% load static %}
+<!-- Log on to codeastro.com for more projects -->
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" type="text/css" href="{% static 'bootstrap/bootstrap.min.css' %}">
+
+    <!-- font awesome cdn -->
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.0/css/all.css" integrity="sha384-lZN37f5QGtY3VHgisS14W3ExzMWZxybE1SJSEsQp9S+oqd12jhcu+A56Ebc1zFSJ" crossorigin="anonymous">
+
+    <!-- Main CSS, then Sidebar CSS and Dialog Box CSS -->
+    <link rel="stylesheet" type="text/css" href="{% static 'css/main.css' %}">    
+    <link rel="stylesheet" type="text/css" href="{% static 'css/sidebar.css' %}">    
+    <link rel="stylesheet" type="text/css" href="{% static 'css/dialogbox.css' %}">    
+
+    <title>IMS - {% block title %}Title Missing{% endblock title %}</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.0-beta3/css/all.min.css">
+    <style>
+        .notification-list {
+            display: none;
+            background-color: #f9f9f9;
+            position: absolute;
+            min-width: 200px;
+            box-shadow: 0 8px 16px 0 rgba(0,0,0,0.2);
+            z-index: 1;
+            right: 0;
+            top: 40px;
+        }
+
+        .notification-list li {
+            padding: 12px 16px;
+            text-decoration: none;
+            display: block;
+            color: #333;
+        }
+
+        .notification-list li:hover {
+            background-color: #ddd;
+        }
+        /* Add this to your <head> section in the <style> block */
+            #loading-overlay {
+                position: fixed;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100%;
+                background-color: rgba(255, 255, 255, 0.7);
+                display: none;
+                z-index: 9999;
+            }
+            
+            #loading-icon {
+                position: absolute;
+                top: 50%;
+                left: 50%;
+                transform: translate(-50%, -50%);
+                font-size: 2rem;
+            }
+            
+    </style>
+</head>
+<!-- Log on to codeastro.com for more projects -->
+<body>
+    <!-- Add this HTML code at the beginning of your <body> section -->
+<div id="loading-overlay">
+    <div id="loading-icon">
+        <i class="fas fa-spinner fa-pulse"></i>
+    </div>
+</div>
+
+    <nav class="navbar navbar-expand-lg navbar-dark fixed-top" style="background-color: #607d8b;">
+        <a class="navbar-brand" href="{% url 'home' %}">Your Company Name</a>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav"
+            aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNav" style="background-color: #607d8b;">
+            <ul class="navbar-nav ml-auto" style="background-color: #607d8b;">
+                <li class="nav-item mr-2" style="background-color: #607d8b;">
+                    <a class="nav-link loading-link" href="{% url 'home' %}"> <i class="fas fa-home"></i> Home</a>
+
+                </li>
+               
+                    <li class="nav-item mr-2" style="background-color: #607d8b;">
+                        <a class="nav-link" href="#notifications" id="notification-icon">
+                            <i class="fas fa-bell"></i> Notifications
+                        </a>
+                        <ul class="notification-list" id="notification-list">
+                            <li><a href="#">Notification 1</a></li>
+                            <li><a href="#">Notification 2</a></li>
+                            <li><a href="#">Notification 3</a></li>
+                        </ul>
+                    </li>
+                
+                <!-- Add more navigation links here as needed -->
+                {% if user.is_authenticated %}
+                    <li class="nav-item" style="background-color: #607d8b;">
+                        <a class="nav-link" class="nav-link loading-link" href="{% url 'logout' %}"><i class="fas fa-sign-out-alt"></i> Logout</a>
+                    </li>
+                {% endif %}
+            </ul>
+        </div>
+    </nav>
+<br> <br>   
+    
+    
+
+    <!-- Dialog Box CSS  -->
+    <div id="dialogoverlay"></div>
+    <div id="dialogbox">
+        <div class="align-middle">
+            <div id="dialogboxhead"></div>
+            <div id="dialogboxbody"></div>
+            <div id="dialogboxfoot"></div>
+        </div>
+    </div>
+
+    <main id="wrapper">
+    
+    {% if user.is_authenticated %}
+    
+        <nav id="sidebar">
+            
+            <div class="sidebar-header">
+                <a class="navbar-brand titlefont mr-4" href="#"><h4>Samy-Company </h4></a>
+            </div>
+
+            <ul class="list-unstyled sidebar-components">
+                {# <p class="sidebar-paragraph">Dummy Heading</p> #}
+                <li> 
+                    <a class="sidebar-text sidebar-button loading-link" href="{% url 'home' %}"><i class="fas fa-home"></i> Home</a>
+                </li>  
+                <li>
+                    <a href="#containerSubmenu" data-toggle="collapse" class="dropdown-toggle sidebar-text right-arrow sidebar-button"><i class="fas fa-boxes"></i> Container</a>
+                    <ul class="collapse list-unstyled" id="containerSubmenu">
+                        <li> <a class="sidebar-text sidebar-subitem sidebar-button loading-link" href="{% url 'add_container' %}"><i class="fas fa-dot-circle"></i> Add New</a> </li>
+                        <li> <a class="sidebar-text sidebar-subitem sidebar-button loading-link" href="{% url 'container_list' %}"><i class="fas fa-dot-circle"></i> Container List</a> </li>
+                    </ul>
+                </li>             
+                <li>
+                    <a href="#inventorySubmenu" data-toggle="collapse" class="dropdown-toggle sidebar-text right-arrow sidebar-button"><i class="fas fa-boxes"></i> Inventory</a>
+                    <ul class="collapse list-unstyled" id="inventorySubmenu">
+                        <li> <a class="sidebar-text sidebar-subitem sidebar-button loading-link" href="{% url 'new-stock' %}"><i class="fas fa-dot-circle"></i> Add New</a> </li>
+                        <li> <a class="sidebar-text sidebar-subitem sidebar-button loading-link" href="{% url 'inventory' %}"><i class="fas fa-dot-circle"></i> Inventory List</a> </li>
+                    </ul>
+                </li>
+                <li>
+                    <a href="#purchaseSubmenu" data-toggle="collapse" class="dropdown-toggle sidebar-text right-arrow sidebar-button"><i class="fas fa-cash-register"></i> Purchases</a>
+                    <ul class="collapse list-unstyled" id="purchaseSubmenu">
+                        <li> <a class="sidebar-text sidebar-subitem sidebar-button loading-link" href="{% url 'select-supplier' %}"><i class="fas fa-dot-circle"></i> New Incoming Stock</a> </li>
+                        <li> <a class="sidebar-text sidebar-subitem sidebar-button loading-link" href="{% url 'purchases-list' %}"><i class="fas fa-dot-circle"></i> Purchases List</a> </li>
+                    </ul>
+                </li>
+                <li>
+                    <a href="#saleSubmenu" data-toggle="collapse" class="dropdown-toggle sidebar-text right-arrow sidebar-button"><i class="fas fa-dollar-sign"></i> Sales</a>
+                    <ul class="collapse list-unstyled" id="saleSubmenu">
+                        <li> <a class="sidebar-text sidebar-subitem sidebar-button loading-link" href="{% url 'new-sale' %}"><i class="fas fa-dot-circle"></i> New Outgoing Stock</a> </li>
+                        <li> <a class="sidebar-text sidebar-subitem sidebar-button loading-link" href="{% url 'sales-list' %}"><i class="fas fa-dot-circle"></i> Sales Orders</a> </li>
+                    </ul>
+                </li>
+                <li>
+                    <a href="#supplierSubmenu" data-toggle="collapse" class="dropdown-toggle sidebar-text right-arrow sidebar-button"><i class="fas fa-dolly-flatbed"></i> Suppliers</a>
+                    <ul class="collapse list-unstyled" id="supplierSubmenu">
+                        <li> <a class="sidebar-text sidebar-subitem sidebar-button loading-link" href="{% url 'new-supplier' %}"><i class="fas fa-dot-circle"></i> Add New Supplier</a> </li>
+                        <li> <a class="sidebar-text sidebar-subitem sidebar-button loading-link" href="{% url 'suppliers-list' %}"><i class="fas fa-dot-circle"></i> Suppliers List</a> </li>
+                    </ul>
+                </li>
+                <li>
+                    <a class="sidebar-text sidebar-button loading-link" href="{% url 'about' %}"><i class="fas fa-info-circle"></i> About</a>
+                </li><!-- Log on to codeastro.com for more projects -->
+
+                <li class="bottomleft">
+                    <a href="#UserSubmenu" data-toggle="collapse" class="dropdown-toggle sidebar-text right-arrow sidebar-button"><i class="fas fa-user-circle"></i> {{ request.user.username }}</a>
+                    <ul class="collapse list-unstyled" id="UserSubmenu">
+                        {% if request.user.is_superuser %}
+                            <li> <a class="sidebar-text sidebar-subitem sidebar-button loading-link" href="{% url 'admin:index' %}"><i class="fas fa-dot-circle"></i> Admin Page</a> </li>
+                        {% endif %}
+                            <li> <a class="sidebar-text sidebar-subitem sidebar-button loading-link" href="{% url 'logout' %}"><i class="fas fa-dot-circle"></i> Logout</a> </li>
+                    </ul>
+                </li>
+
+            </ul>
+            {% comment %}
+            <ul class="list-unstyled CTAs">
+                <li>
+                    <a href="#" class="sidebar-button nav-button">Button</a>
+                </li>
+                <li>
+                    <a href="#" class="sidebar-text">Link</a>
+                </li>
+            </ul>
+            {% endcomment %}
+
+        </nav>
+    
+        <div id="content">
+
+            <div class="row">
+                <div class="col-md-12">
+                
+                    {% if messages %}
+                        {% for message in messages %}
+                            <div class="alert alert-{{ message.tags }}"> {{ message }} </div>
+                        {% endfor %}
+                    {% endif %}
+                
+    {% endif %} 
+
+                    <div class="container">
+                        {% block content %}{% endblock content %}
+                    </div>
+                    
+                </div>
+            </div>
+            <br>
+
+        </div>
+    
+    </main>    
+        <!-- Log on to codeastro.com for more projects -->
+    <!-- jQuery first, then Popper.js, then Bootstrap JS -->
+    <script src="{% static 'bootstrap/jquery-3.3.1.slim.min.js' %}"></script>
+    <script src="{% static 'bootstrap/popper.min.js' %}"></script>
+    <script src="{% static 'bootstrap/bootstrap.min.js' %}"></script>
+    <script>
+        const notificationIcon = document.getElementById("notification-icon");
+        const notificationList = document.getElementById("notification-list");
+
+        notificationIcon.addEventListener("click", () => {
+            if (notificationList.style.display === "block") {
+                notificationList.style.display = "none";
+            } else {
+                notificationList.style.display = "block";
+            }
+        });
+    </script>
+    <!-- Add this script at the end of your <body> section, just before the closing </body> tag -->
+<script>
+    const loadingOverlay = document.getElementById("loading-overlay");
+
+    // Listen for click events on links with class "loading-link"
+    document.querySelectorAll(".loading-link").forEach(link => {
+        link.addEventListener("click", () => {
+            loadingOverlay.style.display = "block";
+        });
+    });
+
+    // When the page is fully loaded, hide the loading overlay
+    window.addEventListener("load", () => {
+        loadingOverlay.style.display = "none";
+    });
+</script>
+
+</body>
+
+</html>
