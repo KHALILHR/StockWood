@@ -49,11 +49,14 @@
 
 <div style="border-bottom: 1px solid white;"></div>
 
+
 <br>
 <div class="input-container">
     <input type="text" id="search-container" class="form-control" placeholder="Search by Stock Name, Wood Type, or Thickness">
 </div>
-
+<button id="exportButton" class="btn btn-primary">
+    <i class="fas fa-file-csv"></i> Export as CSV
+</button>
 {% if stocks %}
     <table class="table table-css table-bordered table-hover">
         <thead class="thead-dark align-middle">
@@ -127,6 +130,39 @@
             }
         });
     });
+
+ // Function to convert table data to CSV format
+ function convertToCSV() {
+    const rows = document.querySelectorAll('.table tbody tr');
+    let csvContent = 'data:text/csv;charset=utf-8,';
+
+    rows.forEach(row => {
+        const rowData = [];
+        row.querySelectorAll('td').forEach(cell => {
+            rowData.push(cell.textContent);
+        });
+        const rowString = rowData.join(',');
+        csvContent += rowString + '\n';
+    });
+
+    return encodeURI(csvContent);
+}
+
+// Function to trigger the download of the CSV file
+function downloadCSV() {
+    const csvData = convertToCSV();
+    const link = document.createElement('a');
+    link.setAttribute('href', csvData);
+    link.setAttribute('download', 'stocks.csv');
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+}
+
+// Event listener for the export button
+document.getElementById('exportButton').addEventListener('click', function() {
+    downloadCSV();
+});
 </script>
 
 {% endblock content %}
