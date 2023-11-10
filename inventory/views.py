@@ -90,4 +90,10 @@ def container_list(request):
         'search_form': search_form,
     }
     return render(request, 'container_list.html', context)
+from django.shortcuts import render
+from .models import Stock  # Assuming your Stock model is imported from the models file
+
+def all_stock(request):
+    stocks = Stock.objects.all()
+    return render(request, 'all_stock.html', {'stocks': stocks})
 

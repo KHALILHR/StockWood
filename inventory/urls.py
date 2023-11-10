@@ -9,5 +9,6 @@ urlpatterns = [
     path('stock/<pk>/delete', views.StockDeleteView.as_view(), name='delete-stock'),
     path('add_container/', views.add_container, name='add_container'),
     path('containers/', views.container_list, name='container_list'),
+    path('all_stock/', views.all_stock, name='all-stock'),
 
 ]

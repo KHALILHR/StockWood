@@ -19,7 +19,7 @@ class StockForm(forms.ModelForm):
 
     class Meta:
         model = Stock
-        fields = ['name', 'container', 'quantity', 'wood_type', 'length', 'width', 'thickness']
+        fields = ['name', 'container', 'quantity', 'wood_type', 'length', 'width', 'thickness', 'cubic_meter']
 
         
         

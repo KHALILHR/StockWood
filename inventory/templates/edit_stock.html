@@ -66,6 +66,12 @@
                             {{ form.thickness|add_class:"form-control" }}
                             {{ form.thickness.errors }}
                         </div>
+                        <div class="form-group">
+                            <label for="{{ form.cubic_meter.id_for_label }}">Cubic Meter</label>
+                            {{ form.cubic_meter|add_class:"form-control" }}
+                            {{ form.cubic_meter.errors }}
+                        </div>
+                        
 
                         <div class="text-center">
                             <button type="submit" class="btn btn-success">{{ savebtn }}</button>

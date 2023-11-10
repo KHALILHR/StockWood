@@ -57,6 +57,7 @@
                 <th width="15%">Length</th>
                 <th width="15%">Width</th>
                 <th width="15%">Thickness</th>
+                <th width="10%">Cubic Meter</th> <!-- New column for Cubic Meter -->
                 <th width="5%">Actions</th>
             </tr>
         </thead>
@@ -69,6 +70,8 @@
                 <td>{{ stock.length }}</td>
                 <td>{{ stock.width }}</td>
                 <td>{{ stock.thickness }}</td>
+                <td>{{ stock.cubic_meter }}</td> <!-- Display the Cubic Meter value -->
+
                 <td>
                     <a href="{% url 'edit-stock' stock.pk %}" class="btn btn-info btn-sm">
                         <i class="fas fa-edit"></i> <!-- Edit Icon -->

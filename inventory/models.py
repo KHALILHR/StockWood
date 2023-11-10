@@ -7,6 +7,7 @@ class Container(models.Model):
 
     def __str__(self):
         return self.name
+from django.db import models
 
 class Stock(models.Model):
     id = models.AutoField(primary_key=True)
@@ -17,7 +18,10 @@ class Stock(models.Model):
     length = models.DecimalField(max_digits=5, decimal_places=2)
     width = models.DecimalField(max_digits=5, decimal_places=2)
     thickness = models.DecimalField(max_digits=5, decimal_places=2)
+    cubic_meter = models.DecimalField(max_digits=10, decimal_places=3, blank=True, null=True)
     container = models.ForeignKey(Container, on_delete=models.SET_NULL, blank=True, null=True)
+
+
 
     def __str__(self):
         return self.name

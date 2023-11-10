@@ -1,0 +1,132 @@
+{% extends "base.html" %}
+{% load widget_tweaks %}
+{% load custom_filters %}
+
+{% block title %} All Stocks {% endblock title %}
+
+{% block content %}
+
+<style>
+    .input-container {
+        margin-bottom: 20px;
+        max-width: 300px;
+    }
+
+    .table {
+        width: 100%;
+        margin-bottom: 20px;
+    }
+
+    th, td {
+        padding: 12px;
+        text-align: left;
+    }
+
+    th {
+        background-color: #343a40; /* Dark gray background for header cells */
+        color: #fff;
+    }
+
+    tbody tr:nth-child(even) {
+        background-color: #f2f2f2; /* Light gray background for even rows */
+    }
+
+    tbody tr:hover {
+        background-color: #d4edda; /* Light green background on hover */
+    }
+
+    .total-row {
+        font-weight: bold;
+        background-color: #007bff; /* Blue background for total row */
+        color: #fff;
+    }
+</style>
+
+<br>
+<div class="row" style="color: #4e4e4e; font-weight: bold; font-size: 3rem;">
+    <div class="col-md-12">All Stocks</div>
+</div>
+
+<div style="border-bottom: 1px solid white;"></div>
+
+<br>
+<div class="input-container">
+    <input type="text" id="search-container" class="form-control" placeholder="Search by Stock Name, Wood Type, or Thickness">
+</div>
+
+{% if stocks %}
+    <table class="table table-css table-bordered table-hover">
+        <thead class="thead-dark align-middle">
+            <tr>
+                <th width="20%">Stock Name</th>
+                <th width="7%">Current Stock in Inventory</th>
+                <th width="15%">Wood Type</th>
+                <th width="15%">Length</th>
+                <th width="15%">Width</th>
+                <th width="15%">Thickness</th>
+                <th width="10%">Cubic Meter</th>
+                <th width="5%">Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for stock in stocks %}
+            <tr>
+                <td>{{ stock.name }}</td>
+                <td>{{ stock.quantity }}</td>
+                <td>{{ stock.wood_type }}</td>
+                <td>{{ stock.length }}</td>
+                <td>{{ stock.width }}</td>
+                <td>{{ stock.thickness }}</td>
+                <td>{{ stock.cubic_meter }}</td>
+
+                <td>
+                    <a href="{% url 'edit-stock' stock.pk %}" class="btn btn-info btn-sm">
+                        <i class="fas fa-edit"></i>
+                    </a>
+                    <a href="{% url 'delete-stock' stock.pk %}" class="btn btn-danger btn-sm">
+                        <i class="fas fa-trash"></i>
+                    </a>
+                </td>
+            </tr>
+            {% endfor %}
+            
+            <!-- Calculate and display the sum of quantity for all stocks -->
+            <tr class="total-row">
+                <td><strong>Total</strong></td>
+                <td><strong>{{ stocks|length }}</strong></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+            </tr>
+        </tbody>
+    </table>
+{% else %}
+    <div style="color: #575757; font-weight: bold; font-size: 1.5rem; text-align: center;">The records are empty. Please try adding some.</div>
+{% endif %}
+
+<script>
+    const searchInput = document.getElementById("search-container");
+    const stocks = document.querySelectorAll('.table tbody tr');
+
+    searchInput.addEventListener("input", () => {
+        const searchText = searchInput.value.trim().toLowerCase();
+
+        stocks.forEach(stock => {
+            const stockName = stock.querySelector('td:nth-child(1)').textContent.trim().toLowerCase();
+            const woodType = stock.querySelector('td:nth-child(3)').textContent.trim().toLowerCase();
+            const thickness = stock.querySelector('td:nth-child(6)').textContent.trim().toLowerCase();
+
+            // Check if the search text matches the stock name, wood type, or thickness
+            if (stockName.includes(searchText) || woodType.includes(searchText) || thickness.includes(searchText)) {
+                stock.style.display = "table-row";
+            } else {
+                stock.style.display = "none";
+            }
+        });
+    });
+</script>
+
+{% endblock content %}
