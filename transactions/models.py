@@ -91,14 +91,16 @@ def get_total_price(self):
 
 #contains the sale stocks made
 class SaleItem(models.Model):
-    billno = models.ForeignKey(SaleBill, on_delete = models.CASCADE, related_name='salebillno')
-    stock = models.ForeignKey(Stock, on_delete = models.CASCADE, related_name='saleitem')
-    quantity = models.IntegerField(default=1)
-    perprice = models.IntegerField(default=1)
-    totalprice = models.IntegerField(default=1)
+    billno = models.ForeignKey(SaleBill, on_delete=models.CASCADE, related_name='salebillno')
+    stock = models.ForeignKey(Stock, on_delete=models.CASCADE, related_name='saleitem')
+    cubic_meter = models.DecimalField(max_digits=10, decimal_places=3, blank=True, null=True)
+    perprice = models.DecimalField(max_digits=10, decimal_places=2, default=0)
+    totalprice = models.DecimalField(max_digits=10, decimal_places=2, default=0)
+    quantity = models.DecimalField(max_digits=10, decimal_places=3, default=0)
 
     def __str__(self):
-	    return "Bill no: " + str(self.billno.billno) + ", Item = " + self.stock.name
+        return "Bill no: " + str(self.billno.billno) + ", Item = " + self.stock.name
+
 
 #contains the other details in the sales bill
 class SaleBillDetails(models.Model):

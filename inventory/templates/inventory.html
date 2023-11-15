@@ -9,20 +9,52 @@
 <style>
     .input-container {
         margin-bottom: 20px; /* Add spacing below the input container */
-        max-width: 300px; 
+        max-width: 300px;
+        
+    }
+
+    .table-bordered {
+        border: 1px solid #dee2e6; /* Updated border style */
+    }
+
+    .table thead {
+        background-color: #f8f9fa; /* Header background color */
+    }
+
+    .table th {
+        text-align: center;
+    }
+
+    .container-name {
+        background-color: #007BFF;
+        color: #FFFFFF;
+        padding: 10px;
+    }
+
+    .pagination {
+        text-align: center;
+        margin-top: 20px;
+    }
+
+    .container .btn {
+        margin-right: 5px; /* Adjust the button margin */
+    }
+
+    .no-records {
+        color: #575757;
+        font-weight: bold;
+        font-size: 1.5rem;
+        text-align: center;
     }
 </style>
 
 <br>
 <div class="row" style="color: #4e4e4e; font-style: bold; font-size: 3rem;">
     <div class="col-md-8">Inventory List</div>
-    <div class="col-md-4">
-        <div style="float:right;">
-            <a class="btn btn-success" href="{% url 'new-stock' %}">
-                <i class="fas fa-plus"></i> <!-- Plus Icon -->
-                Add New Stock
-            </a>
-        </div>
+    <div class="col-md-4" style="text-align: right;">
+        <a class="btn btn-success" href="{% url 'new-stock' %}">
+            <i class="fas fa-plus"></i> Add New Stock
+        </a>
     </div>
 </div>
 
@@ -32,36 +64,32 @@
 <div class="input-container">
     <input type="text" id="search-container" class="form-control" placeholder="Search by Container Name">
 </div>
-
+<br>
 
 {% if object_list %}
     {% regroup object_list by container.name as container_list %}
-    <!-- Existing code... -->
     {% for container in container_list %}
-    <button class="btn btn-success export-excel-btn" data-container="{{ container.grouper }}">
-        <i class="fas fa-file-excel"></i> <!-- Excel Icon -->
-    </button>
-    <table class="table table-css table-bordered table-hover">
-        <thead class="thead-dark align-middle">
+    <table class="table table-bordered table-hover">
+        <thead class="thead-dark">
             <tr>
-                <th colspan="7" style="text-align: center;">
-                    <div class="container-name">
-                        Name of Container: {{ container.grouper }}
-                    </div>
-                </th>
+                <td colspan="9" class="container-name">
+                    Name of Container: <strong>{{ container.grouper }}</strong>
+                </td>
             </tr>
             <tr>
-                <th width="20%">Stock Name</th>
-                <th width="7%">Current Stock in Inventory</th>
-                <th width="15%">Wood Type</th>
-                <th width="15%">Length</th>
-                <th width="15%">Width</th>
-                <th width="15%">Thickness</th>
-                <th width="10%">Cubic Meter</th> <!-- New column for Cubic Meter -->
-                <th width="5%">Actions</th>
+                <th>Stock Name</th>
+                <th>Quantity</th>
+                <th>Wood Type</th>
+                <th>Length</th>
+                <th>Width</th>
+                <th>Thickness</th>
+                <th>Cubic Meter</th>
+                <th>Status</th>
+                <th>Actions</th>
             </tr>
         </thead>
         <tbody>
+            
             {% for stock in container.list %}
             <tr>
                 <td>{{ stock.name }}</td>
@@ -70,66 +98,81 @@
                 <td>{{ stock.length }}</td>
                 <td>{{ stock.width }}</td>
                 <td>{{ stock.thickness }}</td>
-                <td>{{ stock.cubic_meter }}</td> <!-- Display the Cubic Meter value -->
-
+                <td>{{ stock.cubic_meter }} m3</td>
+                <td style="color: 
+                    {% if stock.status == 'STOCKED' %}
+                        green;   <!-- Change the color to green when STOCKED -->
+                    {% elif stock.status == 'OUT_OF_STOCK' %}
+                        red;    <!-- Change the color to red when OUT_OF_STOCK -->
+                    {% else %}
+                        blue;  <!-- Change the color to blue for other statuses, assuming 'OPEN' status -->
+                    {% endif %}">
+                    {{ stock.status }}
+                </td>
                 <td>
                     <a href="{% url 'edit-stock' stock.pk %}" class="btn btn-info btn-sm">
-                        <i class="fas fa-edit"></i> <!-- Edit Icon -->
+                        <i class="fas fa-edit"></i> Edit
                     </a>
                     <a href="{% url 'delete-stock' stock.pk %}" class="btn btn-danger btn-sm">
-                        <i class="fas fa-trash"></i> <!-- Delete Icon -->
+                        <i class="fas fa-trash"></i> Delete
                     </a>
                 </td>
-               
-                    
-                
             </tr>
-            
             {% endfor %}
-            <!-- Calculate and display the sum of quantity -->
             <tr>
-                <td><strong>{{ container.list|length }}</strong></td>
-                <td><strong>{{ container.list|calculate_total_quantity }}</strong></td>
-                <td></td>
-                <td></td>
-                <td></td>
-                <td></td>
-                <td></td>
+                <td colspan="9">
+                    <strong>Total: {{ container.list|length }}</strong>
+                </td>
             </tr>
         </tbody>
     </table>
-    
     {% endfor %}
-    {% else %}
-    <div style="color: #575757; font-style: bold; font-size: 1.5rem; text-align: center;">The records are empty. Please try adding some.</div>
+{% else %}
+    <div class="no-records">
+        The records are empty. Please try adding some.
+    </div>
+{% endif %}
+
+<div class="align-middle">
+    <!-- Log on to codeastro.com for more projects -->
+    {% if is_paginated %}
+        {% if page_obj.has_previous %}
+            <a class="btn btn-outline-info mb-4" href="?page=1">First</a>
+            <a class="btn btn-outline-info mb-4" href="?page={{ page_obj.previous_page_number }}">Previous</a>
+        {% endif %}
+
+        {% for num in page_obj.paginator.page_range %}
+            {% if page_obj.number == num %}
+                <a class="btn btn-info mb-4" href="?page={{ num }}">{{ num }}</a>
+            {% elif num > page_obj.number|add:'-3' and num < page_obj.number|add:'3' %}
+                <a class="btn btn-outline-info mb-4" href="?page={{ num }}">{{ num }}</a>
+            {% endif %}
+        {% endfor %}
+
+        {% if page_obj.has_next %}
+            <a class="btn btn-outline-info mb-4" href="?page={{ page_obj.next_page_number }}">Next</a>
+            <a class="btn btn-outline-info mb-4" href="?page={{ page_obj.paginator.num_pages }}">Last</a>
+        {% endif %}
     {% endif %}
-    <style>
-        .container-name {
-            background-color: #007BFF; /* Background color */
-            color: #FFFFFF; /* Text color */
-            padding: 10px; /* Padding around the container name */
-        }
-    </style>
-
-    <script>
-        const searchInput = document.getElementById("search-container");
-        const containers = document.querySelectorAll('.table');
-
-        searchInput.addEventListener("input", () => {
-            const searchText = searchInput.value.trim().toLowerCase();
-
-            containers.forEach(container => {
-                const containerName = container.querySelector('.container-name').textContent.trim().toLowerCase();
-                if (containerName.includes(searchText)) {
-                    container.style.display = "block";
-                } else {
-                    container.style.display = "none";
-                }
-            });
-        });
-    </script>
-    
-    
-    
 </div>
+
+
+<script>
+    const searchInput = document.getElementById("search-container");
+    const containers = document.querySelectorAll('.table');
+
+    searchInput.addEventListener("input", () => {
+        const searchText = searchInput.value.trim().toLowerCase();
+
+        containers.forEach(container => {
+            const containerName = container.querySelector('.container-name').textContent.trim().toLowerCase();
+            if (containerName.includes(searchText)) {
+                container.style.display = "block";
+            } else {
+                container.style.display = "none";
+            }
+        });
+    });
+</script>
+
 {% endblock content %}

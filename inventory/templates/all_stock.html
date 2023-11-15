@@ -46,17 +46,15 @@
 <div class="row" style="color: #4e4e4e; font-weight: bold; font-size: 3rem;">
     <div class="col-md-12">All Stocks</div>
 </div>
-
 <div style="border-bottom: 1px solid white;"></div>
 
-
-<br>
 <div class="input-container">
     <input type="text" id="search-container" class="form-control" placeholder="Search by Stock Name, Wood Type, or Thickness">
 </div>
 <button id="exportButton" class="btn btn-primary">
     <i class="fas fa-file-csv"></i> Export as CSV
 </button>
+
 {% if stocks %}
     <table class="table table-css table-bordered table-hover">
         <thead class="thead-dark align-middle">
@@ -68,6 +66,8 @@
                 <th width="15%">Width</th>
                 <th width="15%">Thickness</th>
                 <th width="10%">Cubic Meter</th>
+                <th width="10%">Status</th> <!-- New column for status -->
+
                 <th width="5%">Actions</th>
             </tr>
         </thead>
@@ -80,8 +80,17 @@
                 <td>{{ stock.length }}</td>
                 <td>{{ stock.width }}</td>
                 <td>{{ stock.thickness }}</td>
-                <td>{{ stock.cubic_meter }}</td>
-
+                <td>{{ stock.cubic_meter }} m3</td>
+                <td style="color: 
+                    {% if stock.status == 'STOCKED' %}
+                        green;   <!-- Change the color to green when STOCKED -->
+                    {% elif stock.status == 'OUT_OF_STOCK' %}
+                        red;    <!-- Change the color to red when OUT_OF_STOCK -->
+                    {% else %}
+                        blue;  <!-- Change the color to blue for other statuses, assuming 'OPEN' status -->
+                    {% endif %}">
+                    {{ stock.status }}
+                </td>
                 <td>
                     <a href="{% url 'edit-stock' stock.pk %}" class="btn btn-info btn-sm">
                         <i class="fas fa-edit"></i>
@@ -92,23 +101,45 @@
                 </td>
             </tr>
             {% endfor %}
-            
-            <!-- Calculate and display the sum of quantity for all stocks -->
-            <tr class="total-row">
-                <td><strong>Total</strong></td>
-                <td><strong>{{ stocks|length }}</strong></td>
-                <td></td>
-                <td></td>
-                <td></td>
-                <td></td>
-                <td></td>
-                <td></td>
+            <tr class="thead-dark align-middle">
+                <tr>
+                <td colspan="9">
+                    <strong>Total: {{ stocks|length }}</strong>
+                </td>
+            </tr>
             </tr>
         </tbody>
     </table>
+    <div class="align-middle">
+        {% if stocks.has_other_pages %}
+            {% if stocks.has_previous %}
+                <a class="btn btn-outline-info mb-4" href="?page=1">First</a>
+                <a class="btn btn-outline-info mb-4" href="?page={{ stocks.previous_page_number }}">Previous</a>
+            {% endif %}
+    
+            {% for num in stocks.paginator.page_range %}
+                {% if stocks.number == num %}
+                    <a class="btn btn-info mb-4" href="?page={{ num }}">{{ num }}</a>
+                {% elif num > stocks.number|add:'-3' and num < stocks.number|add:'3' %}
+                    <a class="btn btn-outline-info mb-4" href="?page={{ num }}">{{ num }}</a>
+                {% endif %}
+            {% endfor %}
+    
+            {% if stocks.has_next %}
+                <a class="btn btn-outline-info mb-4" href="?page={{ stocks.next_page_number }}">Next</a>
+                <a class="btn btn-outline-info mb-4" href="?page={{ stocks.paginator.num_pages }}">Last</a>
+            {% endif %}
+        {% endif %}
+    </div>
+    
 {% else %}
-    <div style="color: #575757; font-weight: bold; font-size: 1.5rem; text-align: center;">The records are empty. Please try adding some.</div>
+    <div style="color: #575757; font-weight: bold; font-size: 1.5rem; text-align: center;">
+        The records are empty. Please try adding some.
+    </div>
 {% endif %}
+
+</div>
+
 
 <script>
     const searchInput = document.getElementById("search-container");

@@ -93,7 +93,21 @@ def container_list(request):
 from django.shortcuts import render
 from .models import Stock  # Assuming your Stock model is imported from the models file
 
+from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
+
 def all_stock(request):
-    stocks = Stock.objects.all()
+    stock_list = Stock.objects.all()
+    page = request.GET.get('page', 1)
+    paginator = Paginator(stock_list, 10)  # Show 10 stocks per page
+
+    try:
+        stocks = paginator.page(page)
+    except PageNotAnInteger:
+        # If page is not an integer, deliver the first page.
+        stocks = paginator.page(1)
+    except EmptyPage:
+        # If page is out of range (e.g. 9999), deliver the last page of results.
+        stocks = paginator.page(paginator.num_pages)
+
     return render(request, 'all_stock.html', {'stocks': stocks})
 

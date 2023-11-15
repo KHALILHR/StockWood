@@ -1,11 +1,11 @@
 {% extends bill_base %}
 {% load static %}
 
-{% block title %} Facture de vente n° : {{ bill.billno }}{% endblock title %}
+{% block title %} ande de livraision n° : {{ bill.billno }}{% endblock title %}
 
 {% block content %}
 
-    <div style="color:#575757; font-style: bold; font-size: 3rem;  border-bottom: 1px solid white;">Facture de vente n° : {{ bill.billno }}</div>
+    <div style="color:#575757; font-style: bold; font-size: 3rem;  border-bottom: 1px solid white;">Bande de livraision  n° : {{ bill.billno }}</div>
 
     <form method="post">
     {% csrf_token %}
@@ -20,18 +20,20 @@
                     <tbody>
 
                         <tr style="height: 1px;">
-                            <td> <p style="text-align: center;">FACTURE DE TAXE - VENTE</p> </td>
+                            <td> <p style="text-align: center;">Badne de livraision - VENTE</p> </td>
                         </tr>
 
                         <tr style="text-align: center;">
+                            {% for item in items %}
+
                             <td >
                                 <span style="font-size: 350%;">S.G.B</span> <br>
-                                <span style="font-size: 120%; font-weight: bold;">NÉGOCE EN : Produits</span> <br>
+                                <span style="font-size: 120%; font-weight: bold;">NÉGOCE EN : {{ item.stock.name }}</span> <br>
                                 <span style="font-weight: bold;">ADRESSE ENREGISTRÉE :</span> Rue du Centre de Nabeul<br>Umatilla, OR 97882<br>
                                 <span style="font-weight: bold;">EMAIL : SamGlobalBusnisse@gmail.com</span> <br><br>
                             </td>
                         </tr>
-
+                        {% endfor %}
                         <tr>
                             <td>
                             <table class="outer-box" style="width: 800px; margin-left: auto; margin-right: auto;">
@@ -74,6 +76,7 @@
 
                         <tr>
                             <td>
+                              <strong> <center> <p>nous avons l'honneur de communiquer notre meilleure offre de prix détaillés comme suit</p></center></strong>
                             <table class="outer-box" style="width: 800px; margin-left: auto; margin-right: auto;">
                                 <tbody>
                                     <tr>
@@ -82,7 +85,7 @@
                                         <td class="inner-box" style="width: 12%; font-weight: bold; text-align: center;">&nbsp;NCS/CSA</td>
                                         <td class="inner-box" style="width: 12%; font-weight: bold; text-align: center;">QTE MTS</td>
                                         <td class="inner-box" style="width: 12%; font-weight: bold; text-align: center;">TARIF PMT</td>
-                                        <td class="inner-box" style="width: 12%; font-weight: bold; text-align: center;">MONTANT $</td>
+                                        <td class="inner-box" style="width: 12%; font-weight: bold; text-align: center;">TOTAL HT $</td>
                                         <td class="inner-box" style="width: 5%; font-weight: bold; text-align: center;">PS</td>
                                     </tr>
                                     {% for item in items %}
@@ -90,7 +93,7 @@
                                             <td class="inner-box" style="width: 5%;">&nbsp; {{ forloop.counter }}</td>
                                             <td class="inner-box" style="width: 30%;">&nbsp; {{ item.stock.name }}</td>
                                             <td class="inner-box" style="width: 12%;"></td>
-                                            <td class="inner-box" style="width: 12%;">&nbsp; {{ item.quantity }}</td>
+                                            <td class="inner-box" style="width: 12%;">&nbsp; {{ item.cubic_meter }} m3</td>
                                             <td class="inner-box" style="width: 12%;">&nbsp; {{ item.perprice }}</td>
                                             <td class="inner-box" style="width: 12%;">&nbsp;{{ item.totalprice }}</td>
                                             <td class="inner-box" style="width: 5%;">&nbsp;0</td>
@@ -106,31 +109,22 @@
                             <table class="outer-box inner-box" style="width: 800px; margin-left: auto; margin-right: auto;">
                                 <tbody>
                                     <tr>
-                                        <td class="inner-box" style="width: 35%; text-align: center;" rowspan="6">
-                                            <p> <span style="font-weight: bold;">DÉTAILS BANCAIRES <br> CodeAstro</span> <br>
-                                                Banque WestView <br> NUM DE COMPTE - 54A7 6S31 4T85 0RO3 <br> CODE IFSC - ABCD 010 0110 <br> AGENCE CS <br> TÉL. - 541-010-0400</p>
-                                        </td>
-                                        <td class="inner-box" style="width: 30%; font-weight: bold;">&nbsp;TVA CG @ 2.5%</td>
+                                       
+                                        <td class="inner-box" style="width: 30%; font-weight: bold;">&nbsp;TVA 19.0%</td>
                                         <td class="inner-box align-middle" style="width: 30%;">&nbsp; <input type="text" name="cgst" class="align-middle" pattern="[0-9]+\.[0-9]+" style="border: 0; overflow: hidden;" value="{% if billdetails.cgst %}{{ billdetails.cgst }}{% endif %}"></td>
                                     </tr>
+                                    
                                     <tr>
-                                        <td class="inner-box" style="font-weight: bold;">&nbsp;TVA SG @ 2.5%</td>
-                                        <td class="inner-box align-middle">&nbsp; <input type="text" name="sgst" class="align-middle" pattern="[0-9]+\.[0-9]+" style="border: 0; overflow: hidden;" value="{% if billdetails.sgst %}{{ billdetails.sgst }}{% endif %}"></td>
-                                    </tr>
-                                    <tr>
-                                        <td class="inner-box" style="font-weight: bold;">&nbsp;TVA IG @ 5% </td>
+                                        <td class="inner-box" style="font-weight: bold;">&nbsp;FODEC @ 1% </td>
                                         <td class="inner-box align-middle">&nbsp; <input type="text" name "igst" class="align-middle" pattern="[0-9]+\.[0-9]+" style="border: 0; overflow: hidden;" value="{% if billdetails.igst %}{{ billdetails.igst }}{% endif %}"></td>
                                     </tr>
+    
                                     <tr>
-                                        <td class="inner-box" style="font-weight: bold;">&nbsp;COTISATION @ 400/PMT </td>
-                                        <td class="inner-box align-middle">&nbsp; <input type="text" name="cess" class="align-middle" pattern="[0-9]+\.[0-9]+" style="border: 0; overflow: hidden;" value="{% if billdetails.cess %}{{ billdetails.cess }}{% endif %}"></td>
-                                    </tr>
-                                    <tr>
-                                        <td class="inner-box" style="font-weight: bold;">&nbsp;TCS @ 1%</td>
+                                        <td class="inner-box" style="font-weight: bold;">&nbsp;TTC @ 1%</td>
                                         <td class="inner-box align-middle">&nbsp; <input type="text" name="tcs" class="align-middle" pattern="[0-9]+\.[0-9]+" style="border: 0; overflow: hidden;" value="{% if billdetails.tcs %}{{ billdetails.tcs }}{% endif %}"></td>
                                     </tr>
                                     <tr>
-                                        <td class="inner-box" style="font-weight: bold;">&nbsp;TOTAL</td>
+                                        <td class="inner-box" style="font-weight: bold;">&nbsp;TOTAL HTVA</td>
                                         <td class="inner-box align-middle">&nbsp; <input type="text" name="total" class="align-middle" pattern="[0-9]+\.[0.9]+" style="border: 0; overflow: hidden;" value="{% if billdetails.total %}{{ billdetails.total }}{% endif %}"> </td>
                                     </tr>
                                 </tbody>
@@ -140,7 +134,7 @@
 
                         <tr>
                             <td style="text-align: right;">
-                                <span style="font-weight: bold;">Samy Younes <br><br><br><br> Signature</span>
+                                <span style="font-weight: bold;">S.G.B <br><br><br><br> Signature</span>
                             </td>
                         </tr>
 

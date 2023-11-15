@@ -213,52 +213,67 @@ class SaleView(ListView):
 
 
 # used to generate a bill object and save items
-class SaleCreateView(View):                                                      
+from django.shortcuts import redirect
+
+from django.shortcuts import redirect
+
+class SaleCreateView(View):
     template_name = 'sales/new_sale.html'
 
     def get(self, request):
         form = SaleForm(request.GET or None)
-        formset = SaleItemFormset(request.GET or None)                          # renders an empty formset
+        formset = SaleItemFormset(request.GET or None)
         stocks = Stock.objects.filter(is_deleted=False)
         context = {
-            'form'      : form,
-            'formset'   : formset,
-            'stocks'    : stocks
+            'form': form,
+            'formset': formset,
+            'stocks': stocks
         }
         return render(request, self.template_name, context)
 
     def post(self, request):
         form = SaleForm(request.POST)
-        formset = SaleItemFormset(request.POST)                                 # recieves a post method for the formset
+        formset = SaleItemFormset(request.POST)
+        context = {
+            'form': form,
+            'formset': formset,
+            'stocks': Stock.objects.filter(is_deleted=False)
+        }
+
+        stock_error = False  # Flag to check for stock errors
+
         if form.is_valid() and formset.is_valid():
-            # saves bill
-            billobj = form.save(commit=False)
-            billobj.save()     
-            # create bill details object
+            billobj = form.save()  # Save the Sale object first
             billdetailsobj = SaleBillDetails(billno=billobj)
             billdetailsobj.save()
-            for form in formset:                                                # for loop to save each individual form as its own object
-                # false saves the item and links bill to the item
+
+            for form in formset:
                 billitem = form.save(commit=False)
-                billitem.billno = billobj                                       # links the bill object to the items
-                # gets the stock item
-                stock = get_object_or_404(Stock, name=billitem.stock.name)      
-                # calculates the total price
-                billitem.totalprice = billitem.perprice * billitem.quantity
-                # updates quantity in stock db
-                stock.quantity -= billitem.quantity   
-                # saves bill item and stock
-                stock.save()
+                stock = get_object_or_404(Stock, name=billitem.stock.name)
+                billitem.totalprice = billitem.perprice * billitem.cubic_meter
+
+                if billitem.cubic_meter > stock.cubic_meter:
+                    stock_error = True
+                    break
+
+                billitem.billno = billobj  # Assign the Sale object to the SaleItem's billno field
+                stock.cubic_meter -= billitem.cubic_meter
+
                 billitem.save()
-            messages.success(request, "Sold items have been registered successfully")
-            return redirect('sale-bill', billno=billobj.billno)
-        form = SaleForm(request.GET or None)
-        formset = SaleItemFormset(request.GET or None)
-        context = {
-            'form'      : form,
-            'formset'   : formset,
-        }
+                stock.save()
+
+            if stock_error:
+                stock_name = stock.name  # Assuming stock.name is the name field in the Stock model
+                error_message = f"Cubic meter exceeds available stock for {stock_name}."
+                messages.error(request, error_message)
+                return render(request, self.template_name, context)
+            else:
+                messages.success(request, "Sold items have been registered successfully")
+                return redirect('sale-bill', billno=billobj.billno)
+
         return render(request, self.template_name, context)
+
+
 
 
 # used to delete a bill object
