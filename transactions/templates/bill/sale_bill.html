@@ -20,7 +20,7 @@
                     <tbody>
 
                         <tr style="height: 1px;">
-                            <td> <p style="text-align: center;">Badne de livraision - VENTE</p> </td>
+                            <td> <p style="text-align: center;"><strong>Bande de livraision - VENTE N° : {{ bill.billno }}</strong></p> </td>
                         </tr>
 
                         <tr style="text-align: center;">
@@ -85,7 +85,7 @@
                                         <td class="inner-box" style="width: 12%; font-weight: bold; text-align: center;">&nbsp;NCS/CSA</td>
                                         <td class="inner-box" style="width: 12%; font-weight: bold; text-align: center;">QTE MTS</td>
                                         <td class="inner-box" style="width: 12%; font-weight: bold; text-align: center;">TARIF PMT</td>
-                                        <td class="inner-box" style="width: 12%; font-weight: bold; text-align: center;">TOTAL HT $</td>
+                                        <td class="inner-box" style="width: 12%; font-weight: bold; text-align: center;">TOTAL  $</td>
                                         <td class="inner-box" style="width: 5%; font-weight: bold; text-align: center;">PS</td>
                                     </tr>
                                     {% for item in items %}
@@ -109,22 +109,24 @@
                             <table class="outer-box inner-box" style="width: 800px; margin-left: auto; margin-right: auto;">
                                 <tbody>
                                     <tr>
-                                       
                                         <td class="inner-box" style="width: 30%; font-weight: bold;">&nbsp;TVA 19.0%</td>
                                         <td class="inner-box align-middle" style="width: 30%;">&nbsp; <input type="text" name="cgst" class="align-middle" pattern="[0-9]+\.[0-9]+" style="border: 0; overflow: hidden;" value="{% if billdetails.cgst %}{{ billdetails.cgst }}{% endif %}"></td>
+                                        <!-- Add a span element with an ID for displaying the calculated value -->
                                     </tr>
                                     
+                                    <!-- Repeat the same structure for FODEC, TTC, and TOTAL HTVA -->
                                     <tr>
-                                        <td class="inner-box" style="font-weight: bold;">&nbsp;FODEC @ 1% </td>
-                                        <td class="inner-box align-middle">&nbsp; <input type="text" name "igst" class="align-middle" pattern="[0-9]+\.[0-9]+" style="border: 0; overflow: hidden;" value="{% if billdetails.igst %}{{ billdetails.igst }}{% endif %}"></td>
+                                        <td class="inner-box" style="font-weight: bold;">&nbsp;FODEC @ 1%</td>
+                                        <td class="inner-box align-middle">&nbsp; <input type="text" name="igst" class="align-middle" pattern="[0-9]+\.[0-9]+" style="border: 0; overflow: hidden;" value="{% if billdetails.igst %}{{ billdetails.igst }}{% endif %}"></td>
                                     </tr>
-    
+                                    
                                     <tr>
                                         <td class="inner-box" style="font-weight: bold;">&nbsp;TTC @ 1%</td>
                                         <td class="inner-box align-middle">&nbsp; <input type="text" name="tcs" class="align-middle" pattern="[0-9]+\.[0-9]+" style="border: 0; overflow: hidden;" value="{% if billdetails.tcs %}{{ billdetails.tcs }}{% endif %}"></td>
                                     </tr>
+                                    
                                     <tr>
-                                        <td class="inner-box" style="font-weight: bold;">&nbsp;TOTAL HTVA</td>
+                                        <td class="inner-box" style="font-weight: bold; background-color: yellow;">&nbsp;TOTAL HTVA</td>
                                         <td class="inner-box align-middle">&nbsp; <input type="text" name="total" class="align-middle" pattern="[0-9]+\.[0.9]+" style="border: 0; overflow: hidden;" value="{% if billdetails.total %}{{ billdetails.total }}{% endif %}"> </td>
                                     </tr>
                                 </tbody>
@@ -159,6 +161,43 @@
         </div>
 
     </form>
+    <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+
+    <script>
+        function calculateAmounts() {
+            var totalHT = 0;
+            {% for item in items %}
+                totalHT += parseFloat("{{ item.totalprice }}") || 0;
+            {% endfor %}
+    
+            var tvaRate = 0.19;
+            var fodecRate = 0.01;
+            var ttcRate = 0.01;
+    
+            var tva = totalHT * tvaRate;
+            var fodec = totalHT * fodecRate;
+            var ttc = totalHT * ttcRate;
+    
+            // Sum up to get the totalHTVA
+            var totalHTVA = totalHT + tva + fodec + ttc;
+    
+            // Set the values in the corresponding input fields
+            $("input[name='cgst']").val((totalHT + tva).toFixed(2));
+            $("input[name='igst']").val((totalHT + fodec+tva).toFixed(2));
+            $("input[name='tcs']").val((totalHT + ttc +fodec+tva).toFixed(2));
+            $("input[name='total']").val(totalHTVA.toFixed(2));
+    
+            // Display calculated values for each field (optional)
+            $("#tvaValue").text(tva.toFixed(2));
+            $("#fodecValue").text(fodec.toFixed(2));
+            $("#ttcValue").text(ttc.toFixed(2));
+            $("#totalHTVAValue").text(totalHTVA.toFixed(2));
+        }
+    
+        // Call calculateAmounts initially to populate the values
+        calculateAmounts();
+    </script>
+    
 
     <script>
         function printpage(divName) {
@@ -169,6 +208,8 @@
             document.body.innerHTML = originalContents;
         }
     </script>
+
+    
 
 {% endblock %}
 
