@@ -1,6 +1,9 @@
 from django import forms
 from django.forms import formset_factory
 from .models import (
+    Offer,
+    OfferDetails,
+    OfferItem,
     Supplier, 
     PurchaseBill, 
     PurchaseItem,
@@ -66,23 +69,42 @@ class SupplierForm(forms.ModelForm):
 
 
 # form used to get customer details
+from django import forms
+from .models import SaleBill
+
+
 class SaleForm(forms.ModelForm):
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-        self.fields['name'].widget.attrs.update({'class': 'textinput form-control', 'pattern' : '[a-zA-Z\s]{1,50}', 'title' : 'Alphabets and Spaces only', 'required': 'true'})
-        self.fields['phone'].widget.attrs.update({'class': 'textinput form-control', 'maxlength': '8', 'pattern' : '[0-9]{8}', 'title' : 'Numbers only', 'required': 'true'})
-        self.fields['email'].widget.attrs.update({'class': 'textinput form-control'})
-        self.fields['gstin'].widget.attrs.update({'class': 'textinput form-control', 'maxlength': '15', 'pattern' : '[A-Z0-9]{15}', 'title' : 'GSTIN Format Required'})
+    SALE_TYPE_CHOICES = [
+        ('quantity', 'Sale per Quantity'),
+        ('cubic_meter', 'Sale per Cubic Meter'),
+    ]
+
+    EXTRA_OPTIONS_CHOICES = [
+        ('facture_bon_livraison', 'Facture and Bon de Livraison'),
+        ('bon_de_livraison', 'Bon de Livraison'),
+    ]
+
+    sale_type = forms.ChoiceField(
+        choices=SALE_TYPE_CHOICES,
+        widget=forms.RadioSelect(attrs={'class': 'form-check-input'}),
+        initial='quantity',
+    )
+
+    extra_options = forms.ChoiceField(
+        choices=EXTRA_OPTIONS_CHOICES,
+        widget=forms.RadioSelect(attrs={'class': 'form-check-input'}),
+        initial='bon_de_livraison',
+    )
+  
     class Meta:
         model = SaleBill
-        fields = ['name', 'phone', 'address', 'email', 'gstin']
+        fields = ['name', 'phone', 'address', 'email', 'gstin', 'sale_type', 'extra_options']
         widgets = {
-            'address' : forms.Textarea(
-                attrs = {
-                    'class' : 'textinput form-control',
-                    'rows'  : '4'
-                }
-            )
+            'name': forms.TextInput(attrs={'class': 'form-control'}),
+            'phone': forms.TextInput(attrs={'class': 'form-control'}),
+            'email': forms.EmailInput(attrs={'class': 'form-control'}),
+            'address': forms.Textarea(attrs={'class': 'form-control', 'rows': '4'}),
+            'gstin': forms.TextInput(attrs={'class': 'form-control'}),
         }
 
 # form used to render a single stock item form
@@ -91,12 +113,21 @@ class SaleItemForm(forms.ModelForm):
         super().__init__(*args, **kwargs)
         self.fields['stock'].queryset = Stock.objects.filter(is_deleted=False)
         self.fields['stock'].widget.attrs.update({'class': 'textinput form-control setprice stock', 'required': 'true'})
-        self.fields['cubic_meter'].widget.attrs.update({'class': 'textinput form-control setprice cubic_meter', 'min': '0', 'required': 'true'})
-
+        self.fields['cubic_meter'].widget.attrs.update({'class': 'textinput form-control setprice cubic_meter', 'required': 'true'})
+        self.fields['quantity'].widget.attrs.update({'class': 'textinput form-control setprice quantity', 'type': 'number', 'step': '1', 'min': '0', 'required': 'true'})
         self.fields['perprice'].widget.attrs.update({'class': 'textinput form-control setprice price', 'min': '0', 'required': 'true'})
+
     class Meta:
         model = SaleItem
-        fields = ['stock', 'cubic_meter', 'perprice']
+        fields = ['stock', 'cubic_meter', 'quantity', 'perprice']
+        widgets = {
+            'stock': forms.Select(attrs={'class': 'textinput form-control setprice stock', 'required': 'true'}),
+            # ... other fields
+        }
+        field_classes = {
+        'perprice': forms.DecimalField,
+         }
+        
 
 # formset used to render multiple 'SaleItemForm'
 SaleItemFormset = formset_factory(SaleItemForm, extra=1)
@@ -107,5 +138,76 @@ class SaleDetailsForm(forms.ModelForm):
         model = SaleBillDetails
         fields = ['eway','veh', 'destination', 'po', 'cgst', 'sgst', 'igst', 'cess', 'tcs', 'total']
 
+
+from django import forms
+
+
+
+class OfferForm(forms.ModelForm):
+    SALE_TYPE_CHOICES = [
+        ('quantity', 'Sale per Quantity'),
+        ('cubic_meter', 'Sale per Cubic Meter'),
+    ]
+
+    sale_type = forms.ChoiceField(
+        choices=SALE_TYPE_CHOICES,
+        widget=forms.RadioSelect,
+        initial='quantity',
+    )
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields['name'].widget.attrs.update({'class': 'textinput form-control', 'required': 'true'})
+        self.fields['phone'].widget.attrs.update({'class': 'textinput form-control', 'required': 'true'})
+        self.fields['email'].widget.attrs.update({'class': 'textinput form-control'})
+        self.fields['gstin'].widget.attrs.update({'class': 'textinput form-control', 'required': 'true'})
+        # Add other field customizations as needed
+
+    class Meta:
+        model = Offer
+        fields = ['name', 'phone', 'address', 'email', 'gstin', 'sale_type']
+        widgets = {
+            'address': forms.Textarea(attrs={'class': 'textinput form-control', 'rows': '4'}),
+        }
+
+class OfferItemForm(forms.ModelForm):
+    
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields['stock'].queryset = Stock.objects.filter(is_deleted=False)
+        self.fields['stock'].widget.attrs.update({'class': 'textinput form-control setprice stock', 'required': 'true'})
+        self.fields['cubic_meter'].widget.attrs.update({'class': 'textinput form-control setprice cubic_meter', 'required': 'true'})
+        self.fields['quantity'].widget.attrs.update({'class': 'textinput form-control setprice quantity', 'type': 'number', 'step': '1', 'min': '0', 'required': 'true'})
+        self.fields['per_price'].widget.attrs.update({'class': 'textinput form-control setprice price', 'min': '0', 'required': 'true'})
+
+    class Meta:
+        model = OfferItem
+        fields = ['stock', 'cubic_meter', 'quantity', 'per_price']
+        widgets = {
+            'stock': forms.Select(attrs={'class': 'textinput form-control setprice stock', 'required': 'true'}),
+        }
+        field_classes = {
+            'per_price': forms.DecimalField,
+        }
+
+
+OfferItemFormset = forms.formset_factory(OfferItemForm, extra=1)
+
+
+
+class OfferDetailsForm(forms.ModelForm):
+    class Meta:
+        model = OfferDetails
+        fields = ['eway', 'veh', 'destination', 'po', 'cgst', 'sgst', 'igst', 'cess', 'tcs', 'total']
+        # Customize widget attributes as needed for OfferDetails form
+        
+
+
 class ContainerSearchForm(forms.Form):
     name = forms.CharField(max_length=255, required=False, label='Search by container name')
+
+# forms.py
+from django import forms
+
+class OfferSearchForm(forms.Form):
+    customer_name = forms.CharField(required=False, label='Customer Name')

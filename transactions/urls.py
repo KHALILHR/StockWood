@@ -20,4 +20,10 @@ urlpatterns = [
 
     path("purchases/<billno>", views.PurchaseBillView.as_view(), name="purchase-bill"),
     path("sales/<billno>", views.SaleBillView.as_view(), name="sale-bill"),
+    path('facture/<billno>/', views.FactureView.as_view(), name='generate-facture'),
+    path('new-offre/', views.OfferCreateView.as_view(), name='new-offre'),
+    path('offer-bill/<offer_no>/', views.OfferBillView.as_view(), name='offer-bill'),
+    path('offer-list/', views.OfferListView.as_view(), name='offer-list'),
+    path('offer/delete/<int:offer_id>/', views.delete_offer, name='delete_offer'),
+
 ]

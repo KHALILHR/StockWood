@@ -51,6 +51,9 @@ class StockUpdateView(SuccessMessageMixin, UpdateView):
 class StockDeleteView(View):
     template_name = "delete_stock.html"
     success_message = "Stock has been deleted successfully"
+    def get_queryset(self):
+        # Filter out stocks that are marked as deleted
+        return Stock.objects.filter(is_deleted=False)
 
     def get(self, request, pk):
         stock = get_object_or_404(Stock, pk=pk)
@@ -61,7 +64,7 @@ class StockDeleteView(View):
         stock.is_deleted = True
         stock.save()
         messages.success(request, self.success_message)
-        return redirect('inventory')
+        return redirect('all-stock')
     
 def add_container(request):
     if request.method == 'POST':
@@ -94,9 +97,13 @@ from django.shortcuts import render
 from .models import Stock  # Assuming your Stock model is imported from the models file
 
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
+from django.shortcuts import render
+from .models import Stock
 
 def all_stock(request):
-    stock_list = Stock.objects.all()
+    # Exclude stocks that are marked as deleted
+    stock_list = Stock.objects.filter(is_deleted=False)
+
     page = request.GET.get('page', 1)
     paginator = Paginator(stock_list, 10)  # Show 10 stocks per page
 

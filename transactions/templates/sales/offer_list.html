@@ -1,0 +1,93 @@
+{% extends "base.html" %}
+
+{% load widget_tweaks %}
+{% load custom_filters_sec %}
+{% block title %} Offre List {% endblock title %}
+
+{% block content %}
+
+<div class="row" style="color: #575757; font-weight: bold; font-size: 3rem;">
+    <div class="col-md-8">Offre List</div>
+    <div class="col-md-4">
+        <div style="float:right;">
+            <a class="btn btn-success" href="{% url 'new-offre' %}">New Offer</a>
+        </div>
+    </div>
+</div>
+<br>
+<form method="get" class="mb-4">
+    {% csrf_token %}
+    {{ form.customer_name }}
+    <button type="submit" class="btn btn-primary">Search</button>
+</form>
+<br>
+<table class="table table-css table-bordered table-hover">
+    <thead class="thead-dark align-middle">
+        <tr>
+            <th width="10%">Offer No.</th>
+            <th width="15%">Customer</th>
+            <th width="15%">Date</th>
+            <th width="25%">Actions</th>
+        </tr>
+    </thead>
+
+    {% if offers %}
+    <tbody>
+        {% for offer in offers %}
+        <tr>
+            <td class="align-middle">
+                <p>{{ offer.offer_no }}</p>
+            </td>
+            <td>
+                {{ offer.name }} <br>
+                <small style="color: #909494">Ph No : {{ offer.phone }}</small>
+            </td>
+           <!-- Adjust the table cells for items, quantity, and total_price -->
+           
+
+          
+            
+
+            <td class="align-middle">{{ offer.time.date }}</td>
+            <td class="align-middle">
+                <a href="{% url 'offer-bill' offer.offer_no %}" class="btn btn-secondary btn-sm">Offer Bill</a>
+                <a href="{% url 'delete_offer' offer.pk %}" class="btn btn-danger btn-sm">Delete Offer</a>
+
+            </td>
+        </tr>
+        {% endfor %}
+    </tbody>
+
+</table>
+
+<div class="align-middle">
+    {% if is_paginated %}
+    {% if page_obj.has_previous %}
+    <a class="btn btn-outline-info mb-4" href="?page=1">First</a>
+    <a class="btn btn-outline-info mb-4" href="?page={{ page_obj.previous_page_number }}">Previous</a>
+    {% endif %}
+    {% for num in page_obj.paginator.page_range %}
+    {% if page_obj.number == num %}
+    <a class="btn btn-info mb-4" href="?page={{ num }}">{{ num }}</a>
+    {% elif num > page_obj.number|add:'-3' and num < page_obj.number|add:'3' %}
+    <a class="btn btn-outline-info mb-4" href="?page={{ num }}">{{ num }}</a>
+    {% endif %}
+    {% endfor %}
+    {% if page_obj.has_next %}
+    <a class="btn btn-outline-info mb-4" href="?page={{ page_obj.next_page_number }}">Next</a>
+    <a class="btn btn-outline-info mb-4" href="?page={{ page_obj.paginator.num_pages }}">Last</a>
+    {% endif %}
+    {% endif %}
+</div>
+
+{% else %}
+
+<tbody></tbody>
+</table>
+
+<br><br><br><br><br><br><br><br>
+<div style="color: #575757; font-weight: bold; font-size: 1.5rem; text-align: center;">The records are empty. Please try adding some.</div>
+
+{% endif %}
+
+{% endblock content %}

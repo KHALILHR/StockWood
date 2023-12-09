@@ -78,7 +78,7 @@
     <nav class="navbar navbar-expand-lg navbar-dark fixed-top" style="background-color: #607d8b;">
         <div class="navbar-header">
             <a class="navbar-brand titlefont" href="{% url 'home' %}">
-                <img src="{% static 'company.jpg' %}" alt="Company Logo" style="max-width: 50px; height: auto;">
+                <img src="{% static 'SAM.png' %}" alt="Company Logo" style="max-width: 50px; height: auto;">
                 SAM Global Business
             </a>
         </div>
@@ -147,7 +147,9 @@
                     <a class="sidebar-text sidebar-button loading-link" href="{% url 'all-stock' %}"><i class="fas fa-dot-circle"></i> All Stocks</a>
                 </li>
                 <li>
-                    <a href="#containerSubmenu" data-toggle="collapse" class="dropdown-toggle sidebar-text right-arrow sidebar-button"><i class="fas fa-boxes"></i> Container</a>
+                    <a href="#containerSubmenu" data-toggle="collapse" class="dropdown-toggle sidebar-text right-arrow sidebar-button">
+                        <i class="fas fa-box"></i> Container
+                    </a>
                     <ul class="collapse list-unstyled" id="containerSubmenu">
                         <li> <a class="sidebar-text sidebar-subitem sidebar-button loading-link" href="{% url 'add_container' %}"><i class="fas fa-dot-circle"></i> Add New</a> </li>
                         <li> <a class="sidebar-text sidebar-subitem sidebar-button loading-link" href="{% url 'container_list' %}"><i class="fas fa-dot-circle"></i> Container List</a> </li>
@@ -172,8 +174,21 @@
                     <ul class="collapse list-unstyled" id="saleSubmenu">
                         <li> <a class="sidebar-text sidebar-subitem sidebar-button loading-link" href="{% url 'new-sale' %}"><i class="fas fa-dot-circle"></i> New Outgoing Stock</a> </li>
                         <li> <a class="sidebar-text sidebar-subitem sidebar-button loading-link" href="{% url 'sales-list' %}"><i class="fas fa-dot-circle"></i> Sales Orders</a> </li>
+                        
+                        
                     </ul>
                 </li>
+                <li>
+                    <a href="#OfferSubmenu" data-toggle="collapse" class="dropdown-toggle sidebar-text right-arrow sidebar-button">
+                        <i class="fas fa-file-alt"></i> Offer/Devis
+                    </a>
+                    <ul class="collapse list-unstyled" id="OfferSubmenu">
+                        <li> <a class="sidebar-text sidebar-subitem sidebar-button loading-link" href="{% url 'new-offre' %}"><i class="fas fa-dot-circle"></i> New Offer</a> </li>
+                        <li> <a class="sidebar-text sidebar-subitem sidebar-button loading-link" href="{% url 'offer-list' %}"><i class="fas fa-dot-circle"></i> Offer List</a> </li>
+
+                    </ul>
+                </li>
+
                 <li>
                     <a href="#supplierSubmenu" data-toggle="collapse" class="dropdown-toggle sidebar-text right-arrow sidebar-button"><i class="fas fa-dolly-flatbed"></i> Suppliers</a>
                     <ul class="collapse list-unstyled" id="supplierSubmenu">

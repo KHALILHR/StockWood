@@ -1,201 +1,296 @@
 {% extends bill_base %}
 {% load static %}
+{% load custom_filters_sec %}
+<style>
+    .frame {
+        border: 2px solid #000; /* Adjust border color as needed */
+        padding: 10px; /* Adjust padding as needed */
+        text-align: center;
+        margin-bottom: 20px;
+    }
+</style>
 
-{% block title %} ande de livraision n° : {{ bill.billno }}{% endblock title %}
+{% block title %} Bon de livraison n° : {{ bill.billno }}{% endblock title %}
 
 {% block content %}
-
-    <div style="color:#575757; font-style: bold; font-size: 3rem;  border-bottom: 1px solid white;">Bande de livraision  n° : {{ bill.billno }}</div>
+    <div style="color: #575757; font-style: bold; font-size: 3rem; border-bottom: 1px solid white;">bon de livraison n° :  BL-{{ bill.billno }}</div>
 
     <form method="post">
-    {% csrf_token %}
-
+        {% csrf_token %}
         <div class="bg">
-
-            <br>
-
+            <br><br>
             <div id="printArea" class="bg">
-
-                <table class="outer-box inner-box" style="width: 840px; margin-left: auto; margin-right: auto;">
+                
                     <tbody>
+                        <!-- Header -->
+                        
+                        <!-- Company Information -->
+                        
+                        
+                        <div style="overflow: hidden; padding-bottom: 20px;">
+                            <!-- Company Logo -->
+                            <div style="float: left; margin-right: 20px;">
+                                <img src="{% static 'SAM.png' %}" alt="Company Logo" style="max-width: 150px; height: auto;">
+                            </div>
+                        
+                            <!-- Company Title -->
+                            <div style="float: right;">
+                                <p class="title" style="font-size: 1.5rem;"><strong>S.G.B : Le Client d'abord</strong></p>
+                            </div>
+                        </div>
+                        <div style="clear: both;"></div>
 
-                        <tr style="height: 1px;">
-                            <td> <p style="text-align: center;"><strong>Bande de livraision - VENTE N° : {{ bill.billno }}</strong></p> </td>
-                        </tr>
+                                <div class="frame" style="border: 1px solid #000; padding: 10px; text-align: center; margin-bottom: 20px; float: left; width: 45%;">
+                                    <div class="header" style="margin-bottom: 20px;">
+                                        <p class="title" style="font-size: 1.5rem;"><strong>Bon de livraison</strong></p>
+                                        <p class="subtitle"style="font-size: 0.8rem;"> <strong>Numéro : {{ bill.billno}}/{{ bill.time.date|date:"m" }}</strong></p>
 
-                        <tr style="text-align: center;">
-                            {% for item in items %}
+                                        <hr>
+                                        <div class="subtitle-container" style="text-align: center;">
+                                            <p class="title" style="font-size: 1.1rem;"><strong>STE. SAM GLOBAL BUSINESS</strong></p>
+                                            <strong><i class="fas fa-id-card"></i> Matricule Fiscale:</strong> 1840010/J/A/M/000<br><br>
 
-                            <td >
-                                <span style="font-size: 350%;">S.G.B</span> <br>
-                                <span style="font-size: 120%; font-weight: bold;">NÉGOCE EN : {{ item.stock.name }}</span> <br>
-                                <span style="font-weight: bold;">ADRESSE ENREGISTRÉE :</span> Rue du Centre de Nabeul<br>Umatilla, OR 97882<br>
-                                <span style="font-weight: bold;">EMAIL : SamGlobalBusnisse@gmail.com</span> <br><br>
-                            </td>
-                        </tr>
-                        {% endfor %}
-                        <tr>
-                            <td>
-                            <table class="outer-box" style="width: 800px; margin-left: auto; margin-right: auto;">
-                                <tbody>
-                                    <tr>
-                                        <td class="inner-box" style="text-align: center; font-weight: bold;" colspan="3">NUMÉRO DE TVA - 123456789CASTR0</td>
-                                    </tr>
-                                    <tr>
-                                        <td class "inner-box" style="width: 50%; font-weight: bold;">&nbsp;NOM DU DESTINATAIRE / ACHETEUR</td>
-                                        <td class="inner-box" style="width: 25%; font-weight: bold;">&nbsp;NUMÉRO DE FACTURE</td>
-                                        <td class="inner-box" style="width: 25%;">&nbsp;{{ bill.billno }}</td>
-                                    </tr>
-                                    <tr>
-                                        <td class="inner-box" style="width: 50%;">&nbsp;{{ bill.name }}</td>
-                                        <td class="inner-box" style="width: 25%; font-weight: bold;">&nbsp;DATE</td>
-                                        <td class="inner-box" style="width: 25%;">&nbsp;{{ bill.time.date }}</td>
-                                    </tr>
-                                    <tr>
-                                        <td class="inner-box" style="width: 50%;" rowspan="3">{{ bill.address|linebreaks }}</td>
-                                        <td class="inner-box" style="width: 25%; font-weight: bold;">&nbsp;NUMÉRO DE ROUTE</td>
-                                        <td class="inner-box align-middle" style="width: 25%;"> <input type="text" name="eway" class="align-middle" style="border: 0; overflow: hidden;" value="{% if billdetails.eway %}{{ billdetails.eway }}{% endif %}"> </td>
-                                    </tr>
-                                    <tr>
-                                        <td class="inner-box" style="width: 25%; font-weight: bold;">&nbsp;NUMÉRO DE VÉHICULE</td>
-                                        <td class="inner-box align-middle" style="width: 25%;"> <input type="text" name="veh" class="align-middle" style="border: 0; overflow: hidden;" value="{% if billdetails.veh %}{{ billdetails.veh }}{% endif %}"> </td>
-                                    </tr>
-                                    <tr>
-                                        <td class="inner-box" style="width: 25%; font-weight: bold;">&nbsp;DESTINATION</td>
-                                        <td class="inner-box align-middle" style="width: 25%;"> <input type="text" name="destination" class="align-middle" style="border: 0; overflow: hidden;" value="{% if billdetails.destination %}{{ billdetails.destination }}{% endif %}"> </td>
-                                    </tr>
-                                    <tr>
-                                        <td class="inner-box" style="font-weight: bold;">&nbsp;NUMÉRO DE TVA : {{ bill.gstin }} </td>
-                                        <td class="inner-box" style="width: 25%; font-weight: bold;">&nbsp;N° DE BON DE COMMANDE &amp; DATE</td>
-                                        <td class="inner-box align-middle" style="width: 25%;"> <input type="text" name="po" class="align-middle" style="border: 0; overflow: hidden;" value="{% if billdetails.po %}{{ billdetails.po }}{% endif %}"> </td>
-                                    </tr>
-                                </tbody>
-                            </table>
-                            </td>
-                        </tr>
-
-                        <tr>
-                            <td>
-                              <strong> <center> <p>nous avons l'honneur de communiquer notre meilleure offre de prix détaillés comme suit</p></center></strong>
-                            <table class="outer-box" style="width: 800px; margin-left: auto; margin-right: auto;">
-                                <tbody>
-                                    <tr>
-                                        <td class="inner-box" style="width: 5%; font-weight: bold; text-align: center;">&nbsp;N°</td>
-                                        <td class="inner-box" style="width: 30%; font-weight: bold; text-align: center;">MARCHANDISES</td>
-                                        <td class="inner-box" style="width: 12%; font-weight: bold; text-align: center;">&nbsp;NCS/CSA</td>
-                                        <td class="inner-box" style="width: 12%; font-weight: bold; text-align: center;">QTE MTS</td>
-                                        <td class="inner-box" style="width: 12%; font-weight: bold; text-align: center;">TARIF PMT</td>
-                                        <td class="inner-box" style="width: 12%; font-weight: bold; text-align: center;">TOTAL  $</td>
-                                        <td class="inner-box" style="width: 5%; font-weight: bold; text-align: center;">PS</td>
-                                    </tr>
-                                    {% for item in items %}
-                                        <tr style="height: auto;">
-                                            <td class="inner-box" style="width: 5%;">&nbsp; {{ forloop.counter }}</td>
-                                            <td class="inner-box" style="width: 30%;">&nbsp; {{ item.stock.name }}</td>
-                                            <td class="inner-box" style="width: 12%;"></td>
-                                            <td class="inner-box" style="width: 12%;">&nbsp; {{ item.cubic_meter }} m3</td>
-                                            <td class="inner-box" style="width: 12%;">&nbsp; {{ item.perprice }}</td>
-                                            <td class="inner-box" style="width: 12%;">&nbsp;{{ item.totalprice }}</td>
-                                            <td class="inner-box" style="width: 5%;">&nbsp;0</td>
+                                            <!-- Location Icon -->
+                                            <p style="margin-bottom: px;"><i class="fas fa-map-marker-alt"></i> ROUTE TUNIS KM 4, NABEUL 8000</p>
+                                            
+                                            <!-- Email Icon -->
+                                            <p style="margin-bottom: 3px;"><i class="far fa-envelope"></i> contact.sgb.bois@gmail.com</p>
+                                        </div>
+                                        
+                                    </div>
+                                </div>
+                                
+                                <div class="frame" style="border: 1px solid #000; padding: 10px; text-align: center; margin-bottom: 20px; float: right; width: 45%;">
+                                    <div class="header" style="margin-bottom: 20px;">
+                                        <p class="subtitle" style="font-size: 0.7rem; float: left;"> Date: <span id="formattedDate"></span></p>
+                                        <p class="title" style="font-size: 1.5rem;"><strong>Mr. {{ bill.name }} </strong></p>
+                                        <hr>
+                                        <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 5px;">
+                                            
+                                            <div style="width: 50%;">
+                                                <strong><i class="fas fa-phone"></i> Tél: </strong>  {{ bill.phone }}
+                                            </div>
+                                            <div style="margin-bottom: 30px;width: 100%;">
+                                                <strong><i class="far fa-envelope"></i> E-mail: </strong>  {{ bill.email }}
+                                            </div>
+                                        </div>
+                                        
+                                        <div style="margin-bottom: 30px;">
+                                            <strong><i class="fas fa-id-card"></i> Matricule Fiscale:</strong> {{ bill.gstin }}
+                                        </div>
+                                        
+                                       
+                                        
+                                        <div style="margin-bottom: 50px;">
+                                            <strong><i class="far fa-address-card"></i> Contact:</strong>
+                                            <input type="text" name="destination" class="align-middle" style="border: 0; overflow: hidden;" value="{% if billdetails.destination %}{{ billdetails.destination }}{% endif %}">
+                                        </div>
+                                    </div>
+                                </div>
+                    
+                                <style>
+                                    .outer-box {
+                                        width: 100%;
+                                        border-collapse: collapse;
+                                        margin: 0 auto;
+                                        
+                                    }
+                                
+                                    .inner-box {
+                                        font-size: 0.9rem;
+                                        text-align: center;
+                                        padding: 8px;
+                                        border: 1px solid #ddd;
+                                    }
+                                
+                                    .inner-box-header {
+                                        background-color: #ADD8E6;
+                                    }
+                                
+                                    
+                                
+                                    .tax-calculation-table {
+                                        width: 50%; /* Adjust the width as needed */
+                                        margin: 20px auto;
+                                         /* Add some margin for spacing */
+                                    }
+                                </style>
+                                
+                                <table class="outer-box">
+                                    <thead>
+                                        <tr class="inner-box inner-box-header">
+                                            <th style="width: 5%;">Ref</th>
+                                            <th style="width: 17%;">N° Colis</th>   
+                                            <th style="width: 30%;">Article</th>
+                                            <th style="width: 12%;">PU</th>
+                                            <th style="width: 12%;">{% if bill.sale_type == 'quantity' %} QTE {% else %} Surface total {% endif %}</th>
+                                            
+                                            <th style="width: 12%;">Total</th>
                                         </tr>
-                                    {% endfor %}
-                                </tbody>
-                            </table>
-                            </td>
-                        </tr>
-
-                        <tr>
-                            <td>
-                            <table class="outer-box inner-box" style="width: 800px; margin-left: auto; margin-right: auto;">
-                                <tbody>
-                                    <tr>
-                                        <td class="inner-box" style="width: 30%; font-weight: bold;">&nbsp;TVA 19.0%</td>
-                                        <td class="inner-box align-middle" style="width: 30%;">&nbsp; <input type="text" name="cgst" class="align-middle" pattern="[0-9]+\.[0-9]+" style="border: 0; overflow: hidden;" value="{% if billdetails.cgst %}{{ billdetails.cgst }}{% endif %}"></td>
-                                        <!-- Add a span element with an ID for displaying the calculated value -->
-                                    </tr>
+                                    </thead>
+                                    <tbody>
+                                        {% for item in items %}
+                                            <tr>
+                                                <td class="inner-box">&nbsp; {{ forloop.counter }}</td>
+                                                <td class="inner-box">&nbsp; Colis N°:{{ item.stock.name }}</td>
+                                                <td class="inner-box" >
+                                                    &nbsp;<strong>{{ item.stock.wood_type }}</strong>
+                                                    <strong>EP</strong> {{ item.stock.thickness }} mm/<strong>LG</strong> {{ item.stock.length }} m
+                                                </td>
+                                                
+                                                <td class="inner-box">&nbsp; <strong>{{ item.perprice|floatformat:3|format_price }}</strong> DT</td>
+                                                <td class="inner-box">
+                                                    {% if bill.sale_type == 'quantity' %}
+                                                        &nbsp; <strong>{{ item.quantity|floatformat:0 }}</strong> Piece
+                                                    {% else %}
+                                                        &nbsp; <strong>{{ item.cubic_meter }}</strong> m³
+                                                    {% endif %}
+                                                </td>
+                                                <td class="inner-box total-item">&nbsp; <strong>{{ item.totalprice|floatformat:3|format_price }}</strong></td>
+                                            </tr>
+                                        {% endfor %}
+                                        <tr class="inner-box inner-box-total">
+                                            <th class="inner-box">&nbsp;TOTAL</th>
+                                            <td class="inner-box" colspan="3"></td>
+                                            <td class="inner-box total-cubic-meter">
+                                                {% if bill.sale_type == 'quantity' %}
+                                                    &nbsp; <strong><span id="totalQuantityValue">{{ total_quantity }}</span></strong> Piece
+                                                {% else %}
+                                                    &nbsp; <strong><span id="totalCubicMeterValue">{{ total_cubic_meter }}</span></strong> m³
+                                                {% endif %}
+                                            </td>
+                                            
+                                            <td class="inner-box total-all">&nbsp; <strong><span id="totalAllValue"></span></strong></td>
+                                        </tr>
+                                    </tbody>
                                     
-                                    <!-- Repeat the same structure for FODEC, TTC, and TOTAL HTVA -->
-                                    <tr>
-                                        <td class="inner-box" style="font-weight: bold;">&nbsp;FODEC @ 1%</td>
-                                        <td class="inner-box align-middle">&nbsp; <input type="text" name="igst" class="align-middle" pattern="[0-9]+\.[0-9]+" style="border: 0; overflow: hidden;" value="{% if billdetails.igst %}{{ billdetails.igst }}{% endif %}"></td>
-                                    </tr>
-                                    
-                                    <tr>
-                                        <td class="inner-box" style="font-weight: bold;">&nbsp;TTC @ 1%</td>
-                                        <td class="inner-box align-middle">&nbsp; <input type="text" name="tcs" class="align-middle" pattern="[0-9]+\.[0-9]+" style="border: 0; overflow: hidden;" value="{% if billdetails.tcs %}{{ billdetails.tcs }}{% endif %}"></td>
-                                    </tr>
-                                    
-                                    <tr>
-                                        <td class="inner-box" style="font-weight: bold; background-color: yellow;">&nbsp;TOTAL HTVA</td>
-                                        <td class="inner-box align-middle">&nbsp; <input type="text" name="total" class="align-middle" pattern="[0-9]+\.[0.9]+" style="border: 0; overflow: hidden;" value="{% if billdetails.total %}{{ billdetails.total }}{% endif %}"> </td>
-                                    </tr>
-                                </tbody>
-                            </table>
-                            </td>
-                        </tr>
+                                </table><br>
+                                <strong><center><p>Suite votre demande du, nous avons le plaisir de vous faire l'offre suivante:</p></center></strong>
 
-                        <tr>
-                            <td style="text-align: right;">
-                                <span style="font-weight: bold;">S.G.B <br><br><br><br> Signature</span>
-                            </td>
-                        </tr>
-
-                        <tr>
-                            <td style="text-align: center;">
-                                <!-- TEXTE FINAL -->
-                            </td>
-                        </tr>
-
-                    </tbody>
-                </table>
-
-            </div>
-        </div>
-
-        <br><br>
-
-        <div class="wrapper">
-            <button class="center btn btn-primary" onclick="printpage('printArea')">Imprimer</button>
-            <button class="center btn btn-success" type="submit">Enregistrer le brouillon</button>
-            <a href="{% url 'sales-list' %}" class="btn center btn-secondary">Retour</a>
-        </div>
-
+                                <!-- Offer Calculations -->
+                                <table class="outer-box tax-calculation-table">
+                                    <tbody>
+                                        <tr>
+                                            <th class="inner-box" style="width: 30%;">&nbsp;Total HT</th>
+                                            <td class="inner-box" style="width: 30%;">&nbsp;<strong><span id="totalAllValueTop"></span></strong></td>
+                                        </tr>
+                                        <tr>
+                                            <th class="inner-box" style="width: 30%;">&nbsp;TVA 19.0%</th>
+                                            <td class="inner-box" style="width: 30%;">&nbsp;<strong><span id="tvaValue">{% if billdetails.cgst %}{{ billdetails.cgst|floatformat:3 }}{% endif %}</span></strong></td>
+                                        </tr>
+                                
+                                        <!-- Repeat the same structure for TOTAL HT -->
+                                      
+                                
+                                        <tr>
+                                            <th class="inner-box" style="width: 30%;">&nbsp;Timber 1.000</th>
+                                            <td class="inner-box" style="width: 30%;">&nbsp;<strong><span>1.000</span></strong></td>
+                                        </tr>
+                                
+                                        <tr class="inner-box inner-box-total">
+                                            <th class="inner-box" style="background-color: yellow; ">&nbsp;Net à Payer : </th>
+                                            <th class="inner-box">&nbsp;<span id="totalHTVAValue">{% if billdetails.total %}{{ billdetails.total|floatformat:3 }}{% endif %} </span></th>
+                                        </tr>
+                                    </tbody>
+                                </table><br><br><br><br>
+                                <!--text finale de offer-->
+                               
+                                    <p>Dans l'attente d'être honoré par votre commande, cordiales salutations</p>
+                                
+                                    <br><br>
+                                    <div class="frame" style="border: 1px solid #000; padding: 10px; text-align: center; margin-bottom: 20px; float: left; width: 100%;">
+                                        <div class="header" style="margin-bottom: 20px;">
+                                           
+                                            <div class="subtitle-container" style="display: flex; justify-content: space-between;">
+    
+                                            <p class="subtitle"style="font-size: 0.9rem;"> Le Client Partenaire. </p>
+                                            <p class="subtitle" style="font-size: 0.9rem;"> Service commerciale.</p>
+    
+                                        </div>
+                                        </div>
+                                    </div>
+                                
+                                </div>
+                                </div>
+                                <br><br><br>
+                                <div class="wrapper">
+                                    <button class="center btn btn-primary" onclick="printpage('printArea')">Imprimer</button>
+                                    <button class="center btn btn-success" type="submit">Enregistrer le brouillon</button>
+                                    <a href="{% url 'sales-list' %}" class="btn center btn-secondary">Retour</a>
+                                </div>     
+                        
+                      
+                    
+       
     </form>
-    <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
 
+    <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+    
     <script>
         function calculateAmounts() {
             var totalHT = 0;
+            var totalCubicMeter = 0; // Add a variable for total cubic meters
+        
             {% for item in items %}
                 totalHT += parseFloat("{{ item.totalprice }}") || 0;
+                totalCubicMeter += parseFloat("{{ item.cubic_meter }}") || 0; // Sum up cubic meter values
             {% endfor %}
-    
+        
             var tvaRate = 0.19;
-            var fodecRate = 0.01;
-            var ttcRate = 0.01;
-    
+            var timberValue = 1.000;
+        
             var tva = totalHT * tvaRate;
-            var fodec = totalHT * fodecRate;
-            var ttc = totalHT * ttcRate;
-    
-            // Sum up to get the totalHTVA
-            var totalHTVA = totalHT + tva + fodec + ttc;
-    
-            // Set the values in the corresponding input fields
-            $("input[name='cgst']").val((totalHT + tva).toFixed(2));
-            $("input[name='igst']").val((totalHT + fodec+tva).toFixed(2));
-            $("input[name='tcs']").val((totalHT + ttc +fodec+tva).toFixed(2));
-            $("input[name='total']").val(totalHTVA.toFixed(2));
-    
-            // Display calculated values for each field (optional)
-            $("#tvaValue").text(tva.toFixed(2));
-            $("#fodecValue").text(fodec.toFixed(2));
-            $("#ttcValue").text(ttc.toFixed(2));
-            $("#totalHTVAValue").text(totalHTVA.toFixed(2));
+            
+        
+            var totalHTVA = totalHT + tva+ timberValue;
+        
+            // Format the values with a space as a thousands separator
+            var formattedTva = tva.toLocaleString('en-US', { minimumFractionDigits: 3, maximumFractionDigits: 3 });
+            var formattedTotalHTVA = totalHTVA.toLocaleString('en-US', { minimumFractionDigits: 3, maximumFractionDigits: 3 });
+            var formattedTotalCubicMeter = totalCubicMeter.toLocaleString('en-US', { minimumFractionDigits: 3, maximumFractionDigits: 3 });
+        
+            // Set the values in the corresponding hidden input fields
+            $("input[name='cgst']").val(formattedTva);
+            $("input[name='total']").val(formattedTotalHTVA);
+        
+            // Display formatted values for each field
+            $("#tvaValue").text(formattedTva);
+            $("#totalHTVAValue").text(formattedTotalHTVA);
+        
+            // Calculate and display the total of all items and total cubic meters
+            var totalAll = totalHT.toLocaleString('en-US', { minimumFractionDigits: 3, maximumFractionDigits: 3 });
+            $("#totalAllValue").text(totalAll);
+            $("#totalAllValueTop").text(totalAll); // Add this line to set the Total HT at the top of the table
+        
+            var totalCubicMeterElement = $("#totalCubicMeterValue");
+            if (totalCubicMeterElement.length) {
+                totalCubicMeterElement.text(formattedTotalCubicMeter);
+            }
         }
-    
+        
         // Call calculateAmounts initially to populate the values
         calculateAmounts();
+        function calculateQuantityAndCubicMeter() {
+            var totalQuantity = 0;
+            var totalCubicMeter = 0;
+        
+            {% for item in items %}
+                totalQuantity += parseFloat("{{ item.quantity }}") || 0;  // Assuming quantity is a numeric field
+                totalCubicMeter += parseFloat("{{ item.cubic_meter }}") || 0;
+            {% endfor %}
+        
+            // Format the values with a space as a thousands separator
+            var formattedTotalQuantity = totalQuantity.toLocaleString('en-US', { minimumFractionDigits: 0, maximumFractionDigits: 0 });
+            var formattedTotalCubicMeter = totalCubicMeter.toLocaleString('en-US', { minimumFractionDigits: 3, maximumFractionDigits: 3 });
+        
+            // Set the values in the corresponding elements
+            $("#totalQuantityValue").text(formattedTotalQuantity);
+            $("#totalCubicMeterValue").text(formattedTotalCubicMeter);
+            
+        }
+        
+        // Call the function initially to populate the values
+        calculateQuantityAndCubicMeter();
     </script>
     
 
@@ -208,9 +303,17 @@
             document.body.innerHTML = originalContents;
         }
     </script>
+    <script>
+        var originalDate = "{{ bill.time.date }}";
+        var formattedDate = new Date(originalDate).toLocaleDateString('en-US', {
+            month: '2-digit',
+            day: 'numeric',
+            year: 'numeric'
+        });
+    
+        document.getElementById('formattedDate').textContent = formattedDate;
+    </script>
 
     
 
 {% endblock %}
-
-                                              
