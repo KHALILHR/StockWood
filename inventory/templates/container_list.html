@@ -12,12 +12,12 @@
 {% block content %}
 <br>
 <div class="row" style="color: #4e4e4e; font-weight: bold; font-size: 3rem;">
-    <div class="col-md-8">Container List</div>
+    <div class="col-md-8">List De Conteneur </div>
     <div class="col-md-4">
         <div style="float:right;">
             <a class="btn btn-success" href="{% url 'add_container' %}">
                 <i class="fas fa-plus"></i> <!-- Plus Icon -->
-                Add Container
+                Ajouter Conteneur 
             </a>
         </div>
     </div>
@@ -27,7 +27,7 @@
 
 <br>
 
-<input type="text" id="search-input" class="form-control" style="width: 300px;" placeholder="Search by name">
+<input type="text" id="search-input" class="form-control" style="width: 300px;" placeholder="rechercher">
 
 
 <br>
@@ -45,7 +45,7 @@
             </div>
         </div>
     {% empty %}
-        <p class="text-center">No containers found.</p>
+        <p class="text-center">No Conteneur.</p>
     {% endfor %}
 </div>
 

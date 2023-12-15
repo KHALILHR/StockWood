@@ -31,58 +31,67 @@
         <nav id="sidebar">
             
             <div class="sidebar-header">
-                <a class="navbar-brand titlefont mr-4" href="{% url 'home' %}"><h3>S.G.B</h3></a>
+                <a class="navbar-brand titlefont mr-4" href="#"><h4>Sam-Facuration </h4></a>
             </div>
 
             <ul class="list-unstyled sidebar-components">
                 {# <p class="sidebar-paragraph">Dummy Heading</p> #}
+                <li> 
+                    <a class="sidebar-text sidebar-button loading-link" href="{% url 'home' %}"><i class="fas fa-home"></i> Home</a>
+                </li>  
                 <li>
-                    <a class="sidebar-text sidebar-button" href="{% url 'home' %}"><i class="fas fa-home"></i> Home</a>
-                </li>               
-                <li><!-- Log on to codeastro.com for more projects -->
+                    <a href="#containerSubmenu" data-toggle="collapse" class="dropdown-toggle sidebar-text right-arrow sidebar-button">
+                        <i class="fas fa-box"></i> Container
+                    </a>
+                    <ul class="collapse list-unstyled" id="containerSubmenu">
+                        <li> <a class="sidebar-text sidebar-subitem sidebar-button loading-link" href="{% url 'add_container' %}"><i class="fas fa-dot-circle"></i> Add New</a> </li>
+                        <li> <a class="sidebar-text sidebar-subitem sidebar-button loading-link" href="{% url 'container_list' %}"><i class="fas fa-dot-circle"></i> Container List</a> </li>
+                    </ul>
+                </li>  
+               
+                        
+                <li>
                     <a href="#inventorySubmenu" data-toggle="collapse" class="dropdown-toggle sidebar-text right-arrow sidebar-button"><i class="fas fa-boxes"></i> Inventory</a>
                     <ul class="collapse list-unstyled" id="inventorySubmenu">
-                        <li> <a class="sidebar-text sidebar-subitem sidebar-button" href="{% url 'inventory' %}"><i class="fas fa-dot-circle"></i> Inventory List</a> </li>
-                        <li> <a class="sidebar-text sidebar-subitem sidebar-button" href="{% url 'new-stock' %}"><i class="fas fa-dot-circle"></i> Add New Stock</a> </li>
+                        <li> <a class="sidebar-text sidebar-subitem sidebar-button loading-link" href="{% url 'new-stock' %}"><i class="fas fa-dot-circle"></i> Add New</a> </li>
+                        <li> <a class="sidebar-text sidebar-subitem sidebar-button loading-link" href="{% url 'inventory' %}"><i class="fas fa-dot-circle"></i> Inventory List</a> </li>
                     </ul>
                 </li>
-                <li>
-                    <a href="#purchaseSubmenu" data-toggle="collapse" class="dropdown-toggle sidebar-text right-arrow sidebar-button"><i class="fas fa-cash-register"></i> Purchases</a>
-                    <ul class="collapse list-unstyled" id="purchaseSubmenu">
-                        <li> <a class="sidebar-text sidebar-subitem sidebar-button" href="{% url 'purchases-list' %}"><i class="fas fa-dot-circle"></i> Purchases List</a> </li>
-                        <li> <a class="sidebar-text sidebar-subitem sidebar-button" href="{% url 'select-supplier' %}"><i class="fas fa-dot-circle"></i> New Incoming Stock</a> </li>
-                    </ul>
+                <li> 
+                    <a class="sidebar-text sidebar-button loading-link" href="{% url 'all-stock' %}"><i class="fas fa-dot-circle"></i> All Stocks</a>
                 </li>
+              
                 <li>
                     <a href="#saleSubmenu" data-toggle="collapse" class="dropdown-toggle sidebar-text right-arrow sidebar-button"><i class="fas fa-dollar-sign"></i> Sales</a>
                     <ul class="collapse list-unstyled" id="saleSubmenu">
-                        <li> <a class="sidebar-text sidebar-subitem sidebar-button" href="{% url 'sales-list' %}"><i class="fas fa-dot-circle"></i> Sales Orders</a> </li>
-                        <li> <a class="sidebar-text sidebar-subitem sidebar-button" href="{% url 'new-sale' %}"><i class="fas fa-dot-circle"></i> New Outgoing Stock</a> </li>
-                    </ul>
-                </li>
-                <li><!-- Log on to codeastro.com for more projects -->
-                    <a href="#supplierSubmenu" data-toggle="collapse" class="dropdown-toggle sidebar-text right-arrow sidebar-button"><i class="fas fa-dolly-flatbed"></i> Suppliers</a>
-                    <ul class="collapse list-unstyled" id="supplierSubmenu">
-                        <li> <a class="sidebar-text sidebar-subitem sidebar-button" href="{% url 'suppliers-list' %}"><i class="fas fa-dot-circle"></i> Suppliers List</a> </li>
-                        <li> <a class="sidebar-text sidebar-subitem sidebar-button" href="{% url 'new-supplier' %}"><i class="fas fa-dot-circle"></i> Add New Supplier</a> </li>
+                        <li> <a class="sidebar-text sidebar-subitem sidebar-button loading-link" href="{% url 'new-sale' %}"><i class="fas fa-dot-circle"></i> New Outgoing Stock</a> </li>
+                        <li> <a class="sidebar-text sidebar-subitem sidebar-button loading-link" href="{% url 'sales-list' %}"><i class="fas fa-dot-circle"></i> Sales Orders</a> </li>
+                        
+                        
                     </ul>
                 </li>
                 <li>
-                    <a class="sidebar-text sidebar-button" href="{% url 'about' %}"><i class="fas fa-info-circle"></i> About</a>
+                    <a href="#OfferSubmenu" data-toggle="collapse" class="dropdown-toggle sidebar-text right-arrow sidebar-button">
+                        <i class="fas fa-file-alt"></i> Offer/Devis
+                    </a>
+                    <ul class="collapse list-unstyled" id="OfferSubmenu">
+                        <li> <a class="sidebar-text sidebar-subitem sidebar-button loading-link" href="{% url 'new-offre' %}"><i class="fas fa-dot-circle"></i> New Offer</a> </li>
+                        <li> <a class="sidebar-text sidebar-subitem sidebar-button loading-link" href="{% url 'offer-list' %}"><i class="fas fa-dot-circle"></i> Offer List</a> </li>
+
+                    </ul>
                 </li>
 
+             
+                <!-- Log on to codeastro.com for more projects -->
+
                 <li class="bottomleft">
-                    {% if user.is_authenticated %}
-                        <a href="#UserSubmenu" data-toggle="collapse" class="dropdown-toggle sidebar-text right-arrow sidebar-button"><i class="fas fa-user-circle"></i> {{ request.user.username }}</a>
-                        <ul class="collapse list-unstyled" id="UserSubmenu">
-                            {% if request.user.is_superuser %}
-                                <li> <a class="sidebar-text sidebar-subitem sidebar-button" href="{% url 'admin:index' %}"><i class="fas fa-dot-circle"></i> Admin Page</a> </li>
-                            {% endif %}
-                                <li> <a class="sidebar-text sidebar-subitem sidebar-button" href="{% url 'logout' %}"><i class="fas fa-dot-circle"></i> Logout</a> </li>
-                        </ul>
-                    {% else %}
-                        <a href="{% url 'login' %}" class="sidebar-text sidebar-button">Not Logged in</a>
-                    {% endif %}
+                    <a href="#UserSubmenu" data-toggle="collapse" class="dropdown-toggle sidebar-text right-arrow sidebar-button"><i class="fas fa-user-circle"></i> {{ request.user.username }}</a>
+                    <ul class="collapse list-unstyled" id="UserSubmenu">
+                        {% if request.user.is_superuser %}
+                            <li> <a class="sidebar-text sidebar-subitem sidebar-button loading-link" href="{% url 'admin:index' %}"><i class="fas fa-dot-circle"></i> Admin Page</a> </li>
+                        {% endif %}
+                            <li> <a class="sidebar-text sidebar-subitem sidebar-button loading-link" href="{% url 'logout' %}"><i class="fas fa-dot-circle"></i> Logout</a> </li>
+                    </ul>
                 </li>
 
             </ul>
@@ -93,11 +102,12 @@
                 </li>
                 <li>
                     <a href="#" class="sidebar-text">Link</a>
-                </li><!-- Log on to codeastro.com for more projects -->
+                </li>
             </ul>
             {% endcomment %}
 
         </nav>
+    
     
         <div id="content" class="bg-white">
 

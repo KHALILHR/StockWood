@@ -16,7 +16,7 @@
                             
                             <i class="fas fa-plus fa-stack-1x fa-inverse"></i>
                         </span>
-                        {{ title }}
+                        Ajouter Colis
                     </h3>
                 </div>
                 
@@ -25,13 +25,13 @@
                         {% csrf_token %}
                         
                         <div class="form-group">
-                            <label for="{{ form.name.id_for_label }}">Stock Name</label>
+                            <label for="{{ form.name.id_for_label }}">Colis Ref:</label>
                             {{ form.name|add_class:"form-control" }}
                             {{ form.name.errors }}
                         </div>
                         
                         <div class="form-group">
-                            <label for="{{ form.container.id_for_label }}">Container</label>
+                            <label for="{{ form.container.id_for_label }}">Conteneur</label>
                             {{ form.container }}
                             {{ form.container.errors }}
                         </div>
@@ -43,14 +43,14 @@
                         </div>
                         
                         <div class="form-group">
-                            <label for="{{ form.wood_type.id_for_label }}">Wood Type</label>
+                            <label for="{{ form.wood_type.id_for_label }}">Type De Bois</label>
                             {{ form.wood_type|add_class:"form-control" }}
                             {{ form.wood_type.errors }}
                         </div>
                         
                         <div class="form-row">
                             <div class="form-group col-md-6">
-                                <label for="{{ form.length.id_for_label }}">Length</label>
+                                <label for="{{ form.length.id_for_label }}">Long</label>
                                 {{ form.length|add_class:"form-control" }}
                                 {{ form.length.errors }}
                             </div>
@@ -62,26 +62,26 @@
                         </div>
                         
                         <div class="form-group">
-                            <label for="{{ form.thickness.id_for_label }}">Thickness</label>
+                            <label for="{{ form.thickness.id_for_label }}">Ep</label>
                             {{ form.thickness|add_class:"form-control" }}
                             {{ form.thickness.errors }}
                         </div>
                         <div class="form-group">
-                            <label for="{{ form.cubic_meter.id_for_label }}">Cubic Meter</label>
+                            <label for="{{ form.cubic_meter.id_for_label }}">M3</label>
                             {{ form.cubic_meter|add_class:"form-control" }}
                             {{ form.cubic_meter.errors }}
                         </div>
                         
 
                         <div class="text-center">
-                            <button type="submit" class="btn btn-success">{{ savebtn }}</button>
+                            <button type="submit" class="btn btn-success">Ajouter Colis</button>
                             {% if title == "New Stock" %}
                                 <button type="reset" class="btn btn-danger">Reset</button>
                             {% endif %}
                             {% if delbtn %}
                                 <a href="{% url 'delete-stock' object.pk %}" class="btn btn-danger">Delete Stock</a>
                             {% endif %}
-                            <a href="{% url 'inventory' %}" class="btn btn-secondary">Cancel</a>
+                            <a href="{% url 'inventory' %}" class="btn btn-secondary">Anuler</a>
                         </div>
                     </form>
                 </div>

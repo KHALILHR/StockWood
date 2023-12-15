@@ -90,25 +90,16 @@
         <div class="collapse navbar-collapse" id="navbarNav" style="background-color: #607d8b;">
             <ul class="navbar-nav ml-auto" style="background-color: #607d8b;">
                 <li class="nav-item mr-2" style="background-color: #607d8b;">
-                    <a class="nav-link loading-link" href="{% url 'home' %}"> <i class="fas fa-home"></i> Home</a>
+                    <a class="nav-link loading-link" href="{% url 'home' %}"> <i class="fas fa-home"></i> Accueil</a>
 
                 </li>
                
-                    <li class="nav-item mr-2" style="background-color: #607d8b;">
-                        <a class="nav-link" href="#notifications" id="notification-icon">
-                            <i class="fas fa-bell"></i> Notifications
-                        </a>
-                        <ul class="notification-list" id="notification-list">
-                            <li><a href="#">Notification 1</a></li>
-                            <li><a href="#">Notification 2</a></li>
-                            <li><a href="#">Notification 3</a></li>
-                        </ul>
-                    </li>
+           
                 
                 <!-- Add more navigation links here as needed -->
                 {% if user.is_authenticated %}
                     <li class="nav-item" style="background-color: #607d8b;">
-                        <a class="nav-link" class="nav-link loading-link" href="{% url 'logout' %}"><i class="fas fa-sign-out-alt"></i> Logout</a>
+                        <a class="nav-link" class="nav-link loading-link" href="{% url 'logout' %}"><i class="fas fa-sign-out-alt"></i>Déconnexion </a>
                     </li>
                 {% endif %}
             </ul>
@@ -139,78 +130,58 @@
             </div>
 
             <ul class="list-unstyled sidebar-components">
-                {# <p class="sidebar-paragraph">Dummy Heading</p> #}
+                {# <p class="sidebar-paragraph">En-tête fictif</p> #}
                 <li> 
-                    <a class="sidebar-text sidebar-button loading-link" href="{% url 'home' %}"><i class="fas fa-home"></i> Home</a>
+                    <a class="sidebar-text sidebar-button loading-link" href="{% url 'home' %}"><i class="fas fa-home"></i> Accueil</a>
                 </li>  
-                <li> 
-                    <a class="sidebar-text sidebar-button loading-link" href="{% url 'all-stock' %}"><i class="fas fa-dot-circle"></i> All Stocks</a>
-                </li>
                 <li>
                     <a href="#containerSubmenu" data-toggle="collapse" class="dropdown-toggle sidebar-text right-arrow sidebar-button">
-                        <i class="fas fa-box"></i> Container
+                        <i class="fas fa-box"></i> Conteneur
                     </a>
                     <ul class="collapse list-unstyled" id="containerSubmenu">
-                        <li> <a class="sidebar-text sidebar-subitem sidebar-button loading-link" href="{% url 'add_container' %}"><i class="fas fa-dot-circle"></i> Add New</a> </li>
-                        <li> <a class="sidebar-text sidebar-subitem sidebar-button loading-link" href="{% url 'container_list' %}"><i class="fas fa-dot-circle"></i> Container List</a> </li>
+                        <li> <a class="sidebar-text sidebar-subitem sidebar-button loading-link" href="{% url 'add_container' %}"><i class="fas fa-dot-circle"></i> Ajouter un nouveau</a> </li>
+                        <li> <a class="sidebar-text sidebar-subitem sidebar-button loading-link" href="{% url 'container_list' %}"><i class="fas fa-dot-circle"></i> Liste des conteneurs</a> </li>
                     </ul>
-                </li>             
+                </li>  
                 <li>
-                    <a href="#inventorySubmenu" data-toggle="collapse" class="dropdown-toggle sidebar-text right-arrow sidebar-button"><i class="fas fa-boxes"></i> Inventory</a>
+                    <a href="#inventorySubmenu" data-toggle="collapse" class="dropdown-toggle sidebar-text right-arrow sidebar-button"><i class="fas fa-boxes"></i> Inventaire</a>
                     <ul class="collapse list-unstyled" id="inventorySubmenu">
-                        <li> <a class="sidebar-text sidebar-subitem sidebar-button loading-link" href="{% url 'new-stock' %}"><i class="fas fa-dot-circle"></i> Add New</a> </li>
-                        <li> <a class="sidebar-text sidebar-subitem sidebar-button loading-link" href="{% url 'inventory' %}"><i class="fas fa-dot-circle"></i> Inventory List</a> </li>
+                        <li> <a class="sidebar-text sidebar-subitem sidebar-button loading-link" href="{% url 'new-stock' %}"><i class="fas fa-dot-circle"></i> Ajouter un nouveau Colis</a> </li>
+                        <li> <a class="sidebar-text sidebar-subitem sidebar-button loading-link" href="{% url 'inventory' %}"><i class="fas fa-dot-circle"></i> Liste d'inventaire</a> </li>
                     </ul>
                 </li>
-                <li>
-                    <a href="#purchaseSubmenu" data-toggle="collapse" class="dropdown-toggle sidebar-text right-arrow sidebar-button"><i class="fas fa-cash-register"></i> Purchases</a>
-                    <ul class="collapse list-unstyled" id="purchaseSubmenu">
-                        <li> <a class="sidebar-text sidebar-subitem sidebar-button loading-link" href="{% url 'select-supplier' %}"><i class="fas fa-dot-circle"></i> New Incoming Stock</a> </li>
-                        <li> <a class="sidebar-text sidebar-subitem sidebar-button loading-link" href="{% url 'purchases-list' %}"><i class="fas fa-dot-circle"></i> Purchases List</a> </li>
-                    </ul>
+                <li> 
+                    <a class="sidebar-text sidebar-button loading-link" href="{% url 'all-stock' %}"><i class="fas fa-dot-circle"></i> Toutes les Colis</a>
                 </li>
                 <li>
-                    <a href="#saleSubmenu" data-toggle="collapse" class="dropdown-toggle sidebar-text right-arrow sidebar-button"><i class="fas fa-dollar-sign"></i> Sales</a>
+                    <a href="#saleSubmenu" data-toggle="collapse" class="dropdown-toggle sidebar-text right-arrow sidebar-button"><i class="fas fa-dollar-sign"></i> Ventes</a>
                     <ul class="collapse list-unstyled" id="saleSubmenu">
-                        <li> <a class="sidebar-text sidebar-subitem sidebar-button loading-link" href="{% url 'new-sale' %}"><i class="fas fa-dot-circle"></i> New Outgoing Stock</a> </li>
-                        <li> <a class="sidebar-text sidebar-subitem sidebar-button loading-link" href="{% url 'sales-list' %}"><i class="fas fa-dot-circle"></i> Sales Orders</a> </li>
-                        
-                        
+                        <li> <a class="sidebar-text sidebar-subitem sidebar-button loading-link" href="{% url 'new-sale' %}"><i class="fas fa-dot-circle"></i> Formulaire De Vente & B.L</a> </li>
+                        <li> <a class="sidebar-text sidebar-subitem sidebar-button loading-link" href="{% url 'sales-list' %}"><i class="fas fa-dot-circle"></i> Liste De Vente & B.L</a> </li>
                     </ul>
                 </li>
                 <li>
                     <a href="#OfferSubmenu" data-toggle="collapse" class="dropdown-toggle sidebar-text right-arrow sidebar-button">
-                        <i class="fas fa-file-alt"></i> Offer/Devis
+                        <i class="fas fa-file-alt"></i> Offre/Devis
                     </a>
                     <ul class="collapse list-unstyled" id="OfferSubmenu">
-                        <li> <a class="sidebar-text sidebar-subitem sidebar-button loading-link" href="{% url 'new-offre' %}"><i class="fas fa-dot-circle"></i> New Offer</a> </li>
-                        <li> <a class="sidebar-text sidebar-subitem sidebar-button loading-link" href="{% url 'offer-list' %}"><i class="fas fa-dot-circle"></i> Offer List</a> </li>
-
+                        <li> <a class="sidebar-text sidebar-subitem sidebar-button loading-link" href="{% url 'new-offre' %}"><i class="fas fa-dot-circle"></i> Nouvelle offre</a> </li>
+                        <li> <a class="sidebar-text sidebar-subitem sidebar-button loading-link" href="{% url 'offer-list' %}"><i class="fas fa-dot-circle"></i> Liste des offres</a> </li>
                     </ul>
                 </li>
-
-                <li>
-                    <a href="#supplierSubmenu" data-toggle="collapse" class="dropdown-toggle sidebar-text right-arrow sidebar-button"><i class="fas fa-dolly-flatbed"></i> Suppliers</a>
-                    <ul class="collapse list-unstyled" id="supplierSubmenu">
-                        <li> <a class="sidebar-text sidebar-subitem sidebar-button loading-link" href="{% url 'new-supplier' %}"><i class="fas fa-dot-circle"></i> Add New Supplier</a> </li>
-                        <li> <a class="sidebar-text sidebar-subitem sidebar-button loading-link" href="{% url 'suppliers-list' %}"><i class="fas fa-dot-circle"></i> Suppliers List</a> </li>
-                    </ul>
-                </li>
-                <li>
-                    <a class="sidebar-text sidebar-button loading-link" href="{% url 'about' %}"><i class="fas fa-info-circle"></i> About</a>
-                </li><!-- Log on to codeastro.com for more projects -->
-
+                <!-- Connectez-vous sur codeastro.com pour plus de projets -->
+            
                 <li class="bottomleft">
                     <a href="#UserSubmenu" data-toggle="collapse" class="dropdown-toggle sidebar-text right-arrow sidebar-button"><i class="fas fa-user-circle"></i> {{ request.user.username }}</a>
                     <ul class="collapse list-unstyled" id="UserSubmenu">
                         {% if request.user.is_superuser %}
-                            <li> <a class="sidebar-text sidebar-subitem sidebar-button loading-link" href="{% url 'admin:index' %}"><i class="fas fa-dot-circle"></i> Admin Page</a> </li>
+                            <li> <a class="sidebar-text sidebar-subitem sidebar-button loading-link" href="{% url 'admin:index' %}"><i class="fas fa-dot-circle"></i> Page d'administration</a> </li>
                         {% endif %}
-                            <li> <a class="sidebar-text sidebar-subitem sidebar-button loading-link" href="{% url 'logout' %}"><i class="fas fa-dot-circle"></i> Logout</a> </li>
+                        <li> <a class="sidebar-text sidebar-subitem sidebar-button loading-link" href="{% url 'logout' %}"><i class="fas fa-dot-circle"></i> Déconnexion</a> </li>
                     </ul>
                 </li>
-
             </ul>
+            
             {% comment %}
             <ul class="list-unstyled CTAs">
                 <li>
@@ -253,18 +224,6 @@
     <script src="{% static 'bootstrap/jquery-3.3.1.slim.min.js' %}"></script>
     <script src="{% static 'bootstrap/popper.min.js' %}"></script>
     <script src="{% static 'bootstrap/bootstrap.min.js' %}"></script>
-    <script>
-        const notificationIcon = document.getElementById("notification-icon");
-        const notificationList = document.getElementById("notification-list");
-
-        notificationIcon.addEventListener("click", () => {
-            if (notificationList.style.display === "block") {
-                notificationList.style.display = "none";
-            } else {
-                notificationList.style.display = "block";
-            }
-        });
-    </script>
     <!-- Add this script at the end of your <body> section, just before the closing </body> tag -->
 <script>
     const loadingOverlay = document.getElementById("loading-overlay");

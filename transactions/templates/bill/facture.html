@@ -8,6 +8,7 @@
         text-align: center;
         margin-bottom: 20px;
     }
+    
 </style>
 
 {% block title %} Facture n° : {{ bill.numero_facture }}{% endblock title %}
@@ -67,7 +68,7 @@
                                         <hr>
                                         <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 5px;">
                                             
-                                            <div style="width: 100%;">
+                                            <div style="width: 60%;">
                                                 <strong><i class="fas fa-phone"></i> Tél: </strong>  {{ bill.phone }}
                                             </div>
                                             <div style="margin-bottom: 30px;width: 100%;">
@@ -138,7 +139,7 @@
                                                     <strong>EP</strong> {{ item.stock.thickness }} mm/<strong>LG</strong> {{ item.stock.length }} m
                                                 </td>
                                                 
-                                                <td class="inner-box">&nbsp; <strong>{{ item.perprice|floatformat:3|format_price }}</strong> DT</td>
+                                                <td class="inner-box">&nbsp; <strong>{{ item.perprice|floatformat:0|format_price }}</strong> DT</td>
                                                 <td class="inner-box">
                                                     {% if bill.sale_type == 'quantity' %}
                                                         &nbsp; <strong>{{ item.quantity|floatformat:0 }}</strong> Piece
@@ -146,13 +147,15 @@
                                                         &nbsp; <strong>{{ item.cubic_meter }}</strong> m³
                                                     {% endif %}
                                                 </td>
-                                                <td class="inner-box total-item">&nbsp; <strong>{{ item.totalprice|floatformat:3|format_price }}</strong></td>
+                                                <td class="inner-box total-item">&nbsp; <strong>{{ item.totalprice|floatformat:0|format_price }}</strong></td>
                                             </tr>
                                         {% endfor %}
                                         <tr class="inner-box inner-box-total">
                                             <th class="inner-box">&nbsp;TOTAL</th>
-                                            <td class="inner-box" colspan="3"></td>
-                                            <td class="inner-box total-cubic-meter">
+                                            <td class="inner-box" colspan="1">{{ items|length }} Colis</td>
+                                            <td class="inner-box" colspan="2"></td>
+
+                                            <td class="inner-box total-cubic-meter" >
                                                 {% if bill.sale_type == 'quantity' %}
                                                     &nbsp; <strong><span id="totalQuantityValue">{{ total_quantity }}</span></strong> Piece
                                                 {% else %}
@@ -207,8 +210,10 @@
                                             <p class="subtitle" style="font-size: 0.9rem;"> Service commerciale.</p>
     
                                         </div>
+
                                         </div>
                                     </div>
+
                                 
                                 </div>
                                 </div>
@@ -246,8 +251,8 @@
             var totalHTVA = totalHT + tva + timberValue;
         
             // Format the values with a space as a thousands separator
-            var formattedTva = tva.toLocaleString('en-US', { minimumFractionDigits: 3, maximumFractionDigits: 3 });
-            var formattedTotalHTVA = totalHTVA.toLocaleString('en-US', { minimumFractionDigits: 3, maximumFractionDigits: 3 });
+            var formattedTva = tva.toLocaleString('en-US', { minimumFractionDigits: 0, maximumFractionDigits: 0 });
+            var formattedTotalHTVA = totalHTVA.toLocaleString('en-US', { minimumFractionDigits: 0, maximumFractionDigits: 0 });
             var formattedTotalCubicMeter = totalCubicMeter.toLocaleString('en-US', { minimumFractionDigits: 3, maximumFractionDigits: 3 });
         
             // Set the values in the corresponding hidden input fields
@@ -259,7 +264,7 @@
             $("#totalHTVAValue").text(formattedTotalHTVA);
         
             // Calculate and display the total of all items and total cubic meters
-            var totalAll = totalHT.toLocaleString('en-US', { minimumFractionDigits: 3, maximumFractionDigits: 3 });
+            var totalAll = totalHT.toLocaleString('en-US', { minimumFractionDigits: 0, maximumFractionDigits: 0 });
             $("#totalAllValue").text(totalAll);
             $("#totalAllValueTop").text(totalAll); // Add this line to set the Total HT at the top of the table
         

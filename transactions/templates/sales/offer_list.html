@@ -7,10 +7,10 @@
 {% block content %}
 
 <div class="row" style="color: #575757; font-weight: bold; font-size: 3rem;">
-    <div class="col-md-8">Offre List</div>
+    <div class="col-md-8">List D'Offer Enregistrer</div>
     <div class="col-md-4">
         <div style="float:right;">
-            <a class="btn btn-success" href="{% url 'new-offre' %}">New Offer</a>
+            <a class="btn btn-success" href="{% url 'new-offre' %}">Ajouter Offer</a>
         </div>
     </div>
 </div>
@@ -24,9 +24,9 @@
 <table class="table table-css table-bordered table-hover">
     <thead class="thead-dark align-middle">
         <tr>
-            <th width="10%">Offer No.</th>
-            <th width="15%">Customer</th>
-            <th width="15%">Date</th>
+            <th width="10%">Offer N°.</th>
+            <th width="15%">Client</th>
+            <th width="15%">Date De L'Offer</th>
             <th width="25%">Actions</th>
         </tr>
     </thead>
@@ -50,8 +50,12 @@
 
             <td class="align-middle">{{ offer.time.date }}</td>
             <td class="align-middle">
-                <a href="{% url 'offer-bill' offer.offer_no %}" class="btn btn-secondary btn-sm">Offer Bill</a>
-                <a href="{% url 'delete_offer' offer.pk %}" class="btn btn-danger btn-sm">Delete Offer</a>
+                <a href="{% url 'offer-bill' offer.offer_no %}" class="btn btn-secondary btn-sm"><i class="fas fa-eye"></i> Consulter L'Offer
+                    
+                </a>
+                <a href="{% url 'delete_offer' offer.pk %}" class="btn btn-danger btn-sm"><i class="fas fa-trash"></i> Supprimer L'Offer
+                    
+                </a>
 
             </td>
         </tr>

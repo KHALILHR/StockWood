@@ -80,7 +80,7 @@ class SaleForm(forms.ModelForm):
     ]
 
     EXTRA_OPTIONS_CHOICES = [
-        ('facture_bon_livraison', 'Facture and Bon de Livraison'),
+        ('facture_bon_livraison', 'Facture & Bon de Livraison'),
         ('bon_de_livraison', 'Bon de Livraison'),
     ]
 
@@ -115,7 +115,7 @@ class SaleItemForm(forms.ModelForm):
         self.fields['stock'].widget.attrs.update({'class': 'textinput form-control setprice stock', 'required': 'true'})
         self.fields['cubic_meter'].widget.attrs.update({'class': 'textinput form-control setprice cubic_meter', 'required': 'true'})
         self.fields['quantity'].widget.attrs.update({'class': 'textinput form-control setprice quantity', 'type': 'number', 'step': '1', 'min': '0', 'required': 'true'})
-        self.fields['perprice'].widget.attrs.update({'class': 'textinput form-control setprice price', 'min': '0', 'required': 'true'})
+        self.fields['perprice'].widget.attrs.update({'class': 'textinput form-control setprice price','min': '0', 'required': 'true'})
 
     class Meta:
         model = SaleItem

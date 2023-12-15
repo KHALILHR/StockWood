@@ -50,10 +50,10 @@
 
 <br>
 <div class="row" style="color: #4e4e4e; font-style: bold; font-size: 3rem;">
-    <div class="col-md-8">Inventory List</div>
+    <div class="col-md-8"  style="font-weight: bold;">Colis avec Contenaire </div>
     <div class="col-md-4" style="text-align: right;">
         <a class="btn btn-success" href="{% url 'new-stock' %}">
-            <i class="fas fa-plus"></i> Add New Stock
+            <i class="fas fa-plus"></i> Ajouter Nouveau Colis
         </a>
     </div>
 </div>
@@ -62,71 +62,70 @@
 
 <br>
 <div class="input-container">
-    <input type="text" id="search-container" class="form-control" placeholder="Search by Container Name">
+    <input type="text" id="search-container" class="form-control" placeholder="rechercher">
 </div>
 <br>
 
 {% if object_list %}
     {% regroup object_list by container.name as container_list %}
     {% for container in container_list %}
-    <table class="table table-bordered table-hover">
-        <thead class="thead-dark">
-            <tr>
-                <td colspan="9" class="container-name">
-                    Name of Container: <strong>{{ container.grouper }}</strong>
-                </td>
-            </tr>
-            <tr>
-                <th>Stock Name</th>
-                <th>Quantity</th>
-                <th>Wood Type</th>
-                <th>Length</th>
-                <th>Width</th>
-                <th>Thickness</th>
-                <th>Cubic Meter</th>
-                <th>Status</th>
-                <th>Actions</th>
-            </tr>
-        </thead>
-        <tbody>
-            
-            {% for stock in container.list %}
-            <tr>
-                <td>{{ stock.name }}</td>
-                <td>{{ stock.quantity }}</td>
-                <td>{{ stock.wood_type }}</td>
-                <td>{{ stock.length }}</td>
-                <td>{{ stock.width }}</td>
-                <td>{{ stock.thickness }}</td>
-                <td>{{ stock.cubic_meter }} m3</td>
-                <td style="color: 
-                    {% if stock.status == 'STOCKED' %}
-                        green;   <!-- Change the color to green when STOCKED -->
-                    {% elif stock.status == 'OUT_OF_STOCK' %}
-                        red;    <!-- Change the color to red when OUT_OF_STOCK -->
-                    {% else %}
-                        blue;  <!-- Change the color to blue for other statuses, assuming 'OPEN' status -->
-                    {% endif %}">
-                    {{ stock.status }}
-                </td>
-                <td>
-                    <a href="{% url 'edit-stock' stock.pk %}" class="btn btn-info btn-sm">
-                        <i class="fas fa-edit"></i> Edit
-                    </a>
-                    <a href="{% url 'delete-stock' stock.pk %}" class="btn btn-danger btn-sm">
-                        <i class="fas fa-trash"></i> Delete
-                    </a>
-                </td>
-            </tr>
-            {% endfor %}
-            <tr>
-                <td colspan="9">
-                    <strong>Total: {{ container.list|length }}</strong>
-                </td>
-            </tr>
-        </tbody>
-    </table>
-    {% endfor %}
+        <table class="table table-bordered table-hover">
+            <thead class="thead-dark">
+                <tr>
+                    <td colspan="9" class="container-name">
+                       <center> <strong>Nom Contenaire : {{ container.grouper }}</strong></center>
+                    </td>
+                </tr>
+                <tr>
+                    <th>Colis N°</th>
+                    <th>Quantity</th>
+                    <th>Type De Bois</th>
+                    <th>Long</th>
+                    <th>Width</th>
+                    <th>Ep</th>
+                    <th>M3</th>
+                    <th>Status</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for stock in container.list %}
+                    <tr>
+                        <td>{{ stock.name }}</td>
+                        <td>{{ stock.quantity }}</td>
+                        <td>{{ stock.wood_type }}</td>
+                        <td>{{ stock.length }}</td>
+                        <td>{{ stock.width }}</td>
+                        <td>{{ stock.thickness }}</td>
+                        <td>{{ stock.cubic_meter }} m3</td>
+                        <td style="color: 
+                            {% if stock.status == 'STOCKED' %}
+                                green;   <!-- Change the color to green when STOCKED -->
+                            {% elif stock.status == 'OUT_OF_STOCK' %}
+                                red;    <!-- Change the color to red when OUT_OF_STOCK -->
+                            {% else %}
+                                blue;  <!-- Change the color to blue for other statuses, assuming 'OPEN' status -->
+                            {% endif %}">
+                            {{ stock.status }}
+                        </td>
+                        <td>
+                            <a href="{% url 'edit-stock' stock.pk %}" class="btn btn-info btn-sm">
+                                <i class="fas fa-edit"></i> 
+                            </a>
+                            <a href="{% url 'delete-stock' stock.pk %}" class="btn btn-danger btn-sm">
+                                <i class="fas fa-trash"></i> 
+                            </a>
+                        </td>
+                    </tr>
+                {% endfor %}
+                <tr class="totals-row">
+                    <td colspan="1"><strong>Total: </strong></td>
+                    <td colspan="5"><strong> <span class="total-quantity"></span></strong></td>
+                    <td colspan="3"><strong><span class="total-cubic-meters"></span> m3</strong></td>
+                </tr>
+            </tbody>
+        </table>
+     {% endfor %}
 {% else %}
     <div class="no-records">
         The records are empty. Please try adding some.
@@ -166,13 +165,54 @@
 
         containers.forEach(container => {
             const containerName = container.querySelector('.container-name').textContent.trim().toLowerCase();
-            if (containerName.includes(searchText)) {
-                container.style.display = "block";
+            const stockNames = container.querySelectorAll('tbody td:first-child'); // Selecting the first cell in each row (stock name)
+
+            let found = containerName.includes(searchText); // Check if the container name matches the search text
+
+            stockNames.forEach(stockName => {
+                const stockNameText = stockName.textContent.trim().toLowerCase();
+                if (stockNameText.includes(searchText)) {
+                    found = true; // If stock name matches the search text, set found to true
+                }
+            });
+
+            if (found) {
+                container.style.visibility = "visible";
+
+                // Scroll to the top of the container's parent element (assuming the parent is a scrollable element)
+                container.parentElement.scrollTop = 0;
             } else {
-                container.style.display = "none";
+                container.style.visibility = "hidden";
             }
         });
     });
 </script>
+<script>
+    const calculateTotals = () => {
+        document.querySelectorAll('.table').forEach((table) => {
+            const quantityCells = table.querySelectorAll('tbody td:nth-child(2)');
+            const cubicMeterCells = table.querySelectorAll('tbody td:nth-child(7)');
+            let totalQuantity = 0;
+            let totalCubicMeters = 0;
+
+            quantityCells.forEach((cell) => {
+                totalQuantity += parseInt(cell.textContent) || 0;
+            });
+
+            cubicMeterCells.forEach((cell) => {
+                totalCubicMeters += parseFloat(cell.textContent) || 0;
+            });
+
+            // Update total quantity and total cubic meters in the corresponding placeholders
+            table.querySelector('.totals-row .total-quantity').textContent = totalQuantity;
+            table.querySelector('.totals-row .total-cubic-meters').textContent = totalCubicMeters.toFixed(2);
+        });
+    };
+
+    // Call the calculateTotals function after the page is loaded
+    document.addEventListener('DOMContentLoaded', calculateTotals);
+</script>
+
+
 
 {% endblock content %}

@@ -213,6 +213,16 @@ class SaleView(ListView):
     ordering = ['-time']
     paginate_by = 10
 
+    def get_queryset(self):
+        queryset = super().get_queryset()
+        search_name = self.request.GET.get('search_name', '')
+        
+        # Filter sales based on the search_name
+        if search_name:
+            queryset = queryset.filter(name__icontains=search_name)
+
+        return queryset
+
 
 # used to generate a bill object and save items
 from django.shortcuts import redirect

@@ -6,6 +6,7 @@
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
 
 {% block content %}
+<br>
 <div class="container">
     <div class="row justify-content-center">
         <div class="col-md-8">
@@ -15,7 +16,7 @@
                         <span class="fa-stack">
                             <i class="fas fa-plus fa-stack-1x fa-inverse"></i>
                         </span>
-                        Add Container
+                        Ajouter Conteneur
                     </h3>
                 </div>
 
@@ -24,7 +25,7 @@
                         {% csrf_token %}
 
                         <div class="form-group">
-                            <label for="{{ form.name.id_for_label }}">Container Name</label>
+                            <label for="{{ form.name.id_for_label }}">Nom De Conteneur</label>
                             {{ form.name|add_class:"form-control" }}
                             {{ form.name.errors }}
                         </div>
@@ -36,8 +37,8 @@
                         </div>
 
                         <div class="text-center">
-                            <button type="submit" class="btn btn-success">Add Container</button>
-                            <a href="{% url 'container_list' %}" class="btn btn-secondary">Cancel</a>
+                            <button type="submit" class="btn btn-success">Ajouter Conteneur</button>
+                            <a href="{% url 'container_list' %}" class="btn btn-secondary">Anuler</a>
                         </div>
                     </form>
                 </div>

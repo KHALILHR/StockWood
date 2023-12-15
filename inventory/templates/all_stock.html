@@ -44,7 +44,7 @@
 
 <br>
 <div class="row" style="color: #4e4e4e; font-weight: bold; font-size: 3rem;">
-    <div class="col-md-12">All Stocks</div>
+    <div class="col-md-12">Tous les Colis</div>
 </div>
 <div style="border-bottom: 1px solid white;"></div>
 
@@ -59,13 +59,13 @@
     <table class="table table-css table-bordered table-hover">
         <thead class="thead-dark align-middle">
             <tr>
-                <th width="20%">Stock Name</th>
-                <th width="8%">quantity</th>
-                <th width="15%">Wood Type</th>
-                <th width="15%">Length</th>
+                <th width="20%">Colis N°</th>
+                <th width="8%">Quantity</th>
+                <th width="15%">Type De Bois</th>
+                <th width="15%">Long</th>
                 <th width="15%">Width</th>
-                <th width="15%">Thickness</th>
-                <th width="10%">Cubic Meter</th>
+                <th width="15%">Ep</th>
+                <th width="10%">M3</th>
                 <th width="10%">Status</th> <!-- New column for status -->
 
                 <th width="5%">Actions</th>
@@ -101,13 +101,17 @@
                 </td>
             </tr>
             {% endfor %}
-            <tr class="thead-dark align-middle">
-                <tr>
-                <td colspan="9">
-                    <strong>Total: {{ stocks|length }}</strong>
-                </td>
+            <tr>
+                <td colspan="1">
+                    <strong>Total: {{ stocks|length }}</strong></td>
+                    <td colspan="1"><strong>{{ total_quantity }}</strong></td>
+                    <td colspan="1"><strong></strong></td>
+                    <td colspan="3"><strong></strong></td>
+                    <td><strong>{{ total_cubic_meters }}</strong></td>
+
+                
             </tr>
-            </tr>
+        </tr>
         </tbody>
     </table>
     <div class="align-middle">

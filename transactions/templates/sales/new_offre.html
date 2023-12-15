@@ -11,17 +11,17 @@
             <br>
         {% endfor %}
         <hr>
-        <button type="button" class="btn btn-secondary" data-dismiss="alert">Cancel</button>
+        <button type="button" class="btn btn-secondary" data-dismiss="alert">Anuler</button>
         <button type="button" class="btn btn-primary" data-dismiss="alert">OK</button>
     </div>
 {% endif %}
-<div style="color:#575757; font-style: bold; font-size: 3rem; border-bottom: 1px solid white;">New Offer</div>
+<div style="color:#575757; font-style: bold; font-size: 3rem; border-bottom: 1px solid white;">Nouveau Offer</div>
 <br>
 
 <form method="post" class="panel panel-default" enctype="multipart/form-data">
     {% csrf_token %}
     {{ form.non_field_errors }}
-    <div class="panel-heading panel-heading-text">Customer Details</div>
+    <div class="panel-heading panel-heading-text"> Détail De Client(e)</div>
     <div class="panel-body">
         {{ form.name.errors }}
         {{ form.phone.errors }}
@@ -29,12 +29,12 @@
         {{ form.address.errors }}
         {{ form.gstin.errors }}
         <div class="form-group">
-            <label for="{{ form.name.id_for_label }}" class="panel-body-text">Customer Name:</label>
+            <label for="{{ form.name.id_for_label }}" class="panel-body-text">Nom De Client(e):</label>
             {{ form.name }}
         </div>
         <div class="form-row">
             <div class="form-group col-md-6">
-                <label for="{{ form.phone.id_for_label }}" class="panel-body-text">Phone No:</label>
+                <label for="{{ form.phone.id_for_label }}" class="panel-body-text">Tél No:</label>
                 {{ form.phone }}
             </div>
             <div class="form-group col-md-6">
@@ -47,17 +47,17 @@
             {{ form.address }}
         </div>
         <div class="form-group">
-            <label for="{{ form.gstin.id_for_label }}" class="panel-body-text">GSTIN No:</label>
+            <label for="{{ form.gstin.id_for_label }}" class="panel-body-text">Matricule No:</label>
             {{ form.gstin }}
         </div>
         <div class="form-group">
-            <label class="panel-body-text">Sale Type:</label>
+            <label class="panel-body-text">Type D'Offer : </label>
             <div>
                 <input type="radio" id="sale_type_quantity" name="sale_type" value="quantity" {% if form.sale_type.value == 'quantity' %}checked{% endif %}>
-                <label for="sale_type_quantity">Quantity</label>
+                <label for="sale_type_quantity">Quantity.</label><br>
         
                 <input type="radio" id="sale_type_cubic_meter" name="sale_type" value="cubic_meter" {% if form.sale_type.value == 'cubic_meter' %}checked{% endif %}>
-                <label for="sale_type_cubic_meter">Cubic Meter</label>
+                <label for="sale_type_cubic_meter">Meter Cube.</label>
             </div>
         </div>
         
@@ -66,24 +66,24 @@
     <hr>
     <div class="panel panel-default">
         {{ formset.management_form }}
-        <div class="panel-heading panel-heading-text">Product Details</div>
+        <div class="panel-heading panel-heading-text">Détail(s) De Coli(s)  </div>
         <div id="stockitem">
             <div class="panel-body">
                 {% for iform in formset %}
                 <div class="row form-row">
-                    <div class="form-group col-md-6">
+                    <div class="form-group col-md-3">
                         {{ iform.stock.errors }}
-                        <label class="panel-body-text">Stock:</label>
+                        <label class="panel-body-text">Colis N°:</label>
                         {{ iform.stock }}
                     </div>
                     
                     <div class="form-group col-md-2">
-                        <label class="panel-body-text">Price per item:</label>
+                        <label class="panel-body-text">P.U :</label>
                         {{ iform.per_price }}
                     </div>
                     <div class="form-group col-md-2">
                         {{ iform.cubic_meter.errors }}
-                        <label class="panel-body-text">Cubic Meter:</label>
+                        <label class="panel-body-text">Meter Cube:</label>
                         {{ iform.cubic_meter }}
                     </div>
                     <div class="form-group col-md-2">
@@ -91,25 +91,25 @@
                         <label class="panel-body-text">Quantity:</label>
                         {{ iform.quantity }}
                     </div>
-                    <div class="form-group col-md-1">
-                        <label class="panel-body-text">Price:</label>
+                    <div class="form-group col-md-2 ">
+                        <center><label class="panel-body-text" >Total:</label></center>
                         <input type="text" class="textinput form-control totalprice" value="1" disabled required>
                     </div>
-                    <div class="form-group col-md-1">
+                    <div class="form-group col-md-1 ">
                         <label class="panel-body-text" style="color: #000">.</label>
                         <button class="form-control btn btn-danger remove-form-row">-</button>
                     </div>
                 </div>
                 {% endfor %}
                 <div style="text-align: right">
-                    <a href="#" class="add-form-row">+ Add More</a>
+                    <a href="#" class="add-form-row">+ Ajouter Autre</a>
                 </div>
             </div>
         </div>
         <br>
         <div class="align-middle">
-            <button type="submit" class="btn btn-success">Add to Offers</button>
-            <a href="#" class="btn btn-secondary">Cancel</a>
+            <button type="submit" class="btn btn-success">Ajouter Offer</button>
+            <a href="#" class="btn btn-secondary">Anuler</a>
         </div>
     </div>
 </form>

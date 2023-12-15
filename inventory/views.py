@@ -100,9 +100,15 @@ from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.shortcuts import render
 from .models import Stock
 
+from django.db.models import Sum
+
 def all_stock(request):
     # Exclude stocks that are marked as deleted
     stock_list = Stock.objects.filter(is_deleted=False)
+
+    # Calculate total quantity and total cubic meters
+    total_quantity = stock_list.aggregate(Sum('quantity'))['quantity__sum'] or 0
+    total_cubic_meters = stock_list.aggregate(Sum('cubic_meter'))['cubic_meter__sum'] or 0
 
     page = request.GET.get('page', 1)
     paginator = Paginator(stock_list, 10)  # Show 10 stocks per page
@@ -116,5 +122,6 @@ def all_stock(request):
         # If page is out of range (e.g. 9999), deliver the last page of results.
         stocks = paginator.page(paginator.num_pages)
 
-    return render(request, 'all_stock.html', {'stocks': stocks})
+    return render(request, 'all_stock.html', {'stocks': stocks, 'total_quantity': total_quantity, 'total_cubic_meters': total_cubic_meters})
+
 

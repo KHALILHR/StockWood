@@ -5,96 +5,134 @@
 {% block title %} Sales List {% endblock title %}
 
 {% block content %}
-
-<div class="row" style="color: #575757; font-weight: bold; font-size: 3rem;">
-    <div class="col-md-8">Sales List</div>
+<br>
+<div class="row" style="color: #575757; font-weight: bold; font-size: 2.5rem;">
+    <div class="col-md-8">Liste De Vente & Bon De Livraison</div>
     <div class="col-md-4">
         <div style="float:right;">
-            <a class="btn btn-success" href="{% url 'new-sale' %}">New Outgoing Stock</a>
+            <a class="btn btn-success" href="{% url 'new-sale' %}">Ajouter Vente</a>
         </div>
     </div>
-</div>
-
+</div><br>
+<form method="GET" action="{% url 'sales-list' %}">
+    <div class="input-group">
+        <input type="text" class="form-control col-md-3" placeholder="rechercher Client" name="search_name" value="{{ request.GET.search_name }}">
+        <div class="input-group-append">
+            <button class="btn btn-outline-secondary" type="submit">chercher</button>
+        </div>
+    </div>
+</form>
 <br>
 
-<table class="table table-css table-bordered table-hover">
-    <thead class="thead-dark align-middle">
-        <tr>
-            <th width="10%">Bill No.</th>
-            <th width="10%">Facture No.</th>
-            <th width="15%">Customer</th>
-            <th width="15%">Date</th>
-            <th width="25%">Actions</th>
-        </tr>
-    </thead>
+{% if bills %}
+    {% if bills|length > 0 %}
+    <div class="row" style="color: #575757; font-weight: bold; font-size: 1.5rem;">
+    <div class="col-md-8">Facture & Bon de Livraison</div>
+    </div><br>
+        <table class="table table-css table-bordered table-hover">
+            <thead class="thead-dark align-middle">
+                <tr>
+                    <th width="13%">Bon Livraison N°.</th>
+                    <th width="10%">Facture N°.</th>
+                    <th width="15%">Client</th>
+                    <th width="15%">Date De Vente</th>
+                    <th width="25%">Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for sale in bills %}
+                    {% if sale.extra_options == 'facture_bon_livraison' %}
+                        <tr>
+                            <td class="align-middle">
+                                <p>{{ sale.billno }}</p>
+                            </td>
+                            <td class="align-middle">
+                                {% if sale.numero_facture == 0 %}
+                                    <p>Pas de facture</p>
+                                {% else %}
+                                    <p>{{ sale.numero_facture }}</p>
+                                {% endif %}
+                            </td>
+                            <td>
+                                {{ sale.name }} <br>
+                                <small style="color: #909494">Ph No : {{ sale.phone }}</small>
+                            </td>
+                            <td class="align-middle">{{ sale.time.date }}</td>
+                            <td class="align-middle">
+                                <a href="{% url 'generate-facture' sale.pk %}" class="btn btn-primary btn-sm">Facture</a>
+                                <a href="{% url 'sale-bill' sale.billno %}" class="btn btn-secondary btn-sm">Bon de Livraison</a>
+                                <a href="{% url 'delete-sale' sale.pk %}" class="btn btn-danger btn-sm">
+                                    <i class="fas fa-trash"></i>
+                                </a>
+                            </td>
+                        </tr>
+                    {% endif %}
+                {% endfor %}
+            </tbody>
+        </table>
+    {% endif %}
 
-    {% if bills %}
-    <tbody>
-        {% for sale in bills %}
-        
-        <tr>
-            <td class="align-middle">
-                <p>{{ sale.billno }}</p>
-            </td>
-            <td class="align-middle">
-                {% if sale.numero_facture == 0 %}
-                    <p>Pas de facture</p>
-                {% else %}
-                    <p>{{ sale.numero_facture }}</p>
-                {% endif %}
-            </td>
-            <td>
-                {{ sale.name }} <br>
-                <small style="color: #909494">Ph No : {{ sale.phone }}</small>
-            </td>
-           
-
-            
-           
-
-           
-            <td class="align-middle">{{ sale.time.date }}</td>
-            <td class="align-middle">
-                {% if sale.extra_options == 'facture_bon_livraison' %}
-                    <a href="{% url 'generate-facture' sale.pk %}" class="btn btn-primary btn-sm">Facture</a>
-                {% endif %}
-                <a href="{% url 'sale-bill' sale.billno %}" class="btn btn-secondary btn-sm">Bon de Livraision</a>
-                <a href="{% url 'delete-sale' sale.pk %}" class="btn btn-danger btn-sm">Delete Bill</a>
-            </td>
-        </tr>
-        {% endfor %}
-    </tbody>
-
-</table>
+    {% if bills|length > 0 %}
+    <div class="row" style="color: #575757; font-weight: bold; font-size: 1.5rem;">
+        <div class="col-md-8">Bon de Livraison</div>
+        </div><br>
+        <table class="table table-css table-bordered table-hover">
+            <thead class="thead-dark align-middle">
+                <tr>
+                    <th width="13%">Bon Livraison N°.</th>
+                    <th width="15%">Client</th>
+                    <th width="15%">Date De Vente</th>
+                    <th width="25%">Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for sale in bills %}
+                    {% if sale.extra_options == 'bon_de_livraison' %}
+                        <tr>
+                            <td class="align-middle">
+                                <p>{{ sale.billno }}</p>
+                            </td>
+                            <td>
+                                {{ sale.name }} <br>
+                                <small style="color: #909494">Ph No : {{ sale.phone }}</small>
+                            </td>
+                            <td class="align-middle">{{ sale.time.date }}</td>
+                            <td class="align-middle">
+                                <a href="{% url 'sale-bill' sale.billno %}" class="btn btn-secondary btn-sm">Bon de Livraison</a>
+                                <a href="{% url 'delete-sale' sale.pk %}" class="btn btn-danger btn-sm">
+                                    <i class="fas fa-trash"></i>
+                                </a>
+                            </td>
+                        </tr>
+                    {% endif %}
+                {% endfor %}
+            </tbody>
+        </table>
+    {% endif %}
+{% else %}
+    <div class="no-records">
+        The records are empty. Please try adding some.
+    </div>
+{% endif %}
 
 <div class="align-middle">
     {% if is_paginated %}
-    {% if page_obj.has_previous %}
-    <a class="btn btn-outline-info mb-4" href="?page=1">First</a>
-    <a class="btn btn-outline-info mb-4" href="?page={{ page_obj.previous_page_number }}">Previous</a>
-    {% endif %}
-    {% for num in page_obj.paginator.page_range %}
-    {% if page_obj.number == num %}
-    <a class="btn btn-info mb-4" href="?page={{ num }}">{{ num }}</a>
-    {% elif num > page_obj.number|add:'-3' and num < page_obj.number|add:'3' %}
-    <a class="btn btn-outline-info mb-4" href="?page={{ num }}">{{ num }}</a>
-    {% endif %}
-    {% endfor %}
-    {% if page_obj.has_next %}
-    <a class="btn btn-outline-info mb-4" href="?page={{ page_obj.next_page_number }}">Next</a>
-    <a class="btn btn-outline-info mb-4" href="?page={{ page_obj.paginator.num_pages }}">Last</a>
-    {% endif %}
+        {% if page_obj.has_previous %}
+            <a class="btn btn-outline-info mb-4" href="?page=1">First</a>
+            <a class="btn btn-outline-info mb-4" href="?page={{ page_obj.previous_page_number }}">Previous</a>
+        {% endif %}
+        {% for num in page_obj.paginator.page_range %}
+            {% if page_obj.number == num %}
+                <a class="btn btn-info mb-4" href="?page={{ num }}">{{ num }}</a>
+            {% elif num > page_obj.number|add:'-3' and num < page_obj.number|add:'3' %}
+                <a class="btn btn-outline-info mb-4" href="?page={{ num }}">{{ num }}</a>
+            {% endif %}
+        {% endfor %}
+        {% if page_obj.has_next %}
+            <a class="btn btn-outline-info mb-4" href="?page={{ page_obj.next_page_number }}">Next</a>
+            <a class="btn btn-outline-info mb-4" href="?page={{ page_obj.paginator.num_pages }}">Last</a>
+        {% endif %}
     {% endif %}
 </div>
-
-{% else %}
-
-<tbody></tbody>
-</table>
-
-<br><br><br><br><br><br><br><br>
-<div style="color: #575757; font-weight: bold; font-size: 1.5rem; text-align: center;">The records are empty. Please try adding some.</div>
-
-{% endif %}
 
 {% endblock content %}
