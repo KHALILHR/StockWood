@@ -175,16 +175,15 @@
             });
 
             if (found) {
-                container.style.visibility = "visible";
-
-                // Scroll to the top of the container's parent element (assuming the parent is a scrollable element)
-                container.parentElement.scrollTop = 0;
+                container.style.display = ""; // Show the container
+                container.scrollIntoView({ behavior: 'smooth', block: 'start' });
             } else {
-                container.style.visibility = "hidden";
+                container.style.display = "none"; // Hide the container
             }
         });
     });
 </script>
+
 <script>
     const calculateTotals = () => {
         document.querySelectorAll('.table').forEach((table) => {
