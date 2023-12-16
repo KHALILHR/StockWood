@@ -20,6 +20,23 @@ class StockListView(FilterView):
     template_name = 'inventory.html'
     paginate_by = 10
 
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+
+        # Group stocks by container name
+        grouped_stocks = {}
+        for stock in context['object_list']:
+            container_name = stock.container.name if stock.container else 'No Container'
+            if container_name not in grouped_stocks:
+                grouped_stocks[container_name] = []
+            grouped_stocks[container_name].append(stock)
+
+        # Convert the grouped data to a list for the template
+        context['grouped_stocks'] = [{'container_name': container_name, 'stocks': stocks} for container_name, stocks in grouped_stocks.items()]
+
+        return context
+
+
 
 class StockCreateView(SuccessMessageMixin, CreateView):
     model = Stock

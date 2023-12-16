@@ -65,15 +65,13 @@
     <input type="text" id="search-container" class="form-control" placeholder="rechercher">
 </div>
 <br>
-
-{% if object_list %}
-    {% regroup object_list by container.name as container_list %}
-    {% for container in container_list %}
+{% if grouped_stocks %}
+    {% for container in grouped_stocks %}
         <table class="table table-bordered table-hover">
             <thead class="thead-dark">
                 <tr>
                     <td colspan="9" class="container-name">
-                       <center> <strong>Nom Contenaire : {{ container.grouper }}</strong></center>
+                        <center><strong>Nom Contenaire : {{ container.container_name }}</strong></center>
                     </td>
                 </tr>
                 <tr>
@@ -89,7 +87,7 @@
                 </tr>
             </thead>
             <tbody>
-                {% for stock in container.list %}
+                {% for stock in container.stocks %}
                     <tr>
                         <td>{{ stock.name }}</td>
                         <td>{{ stock.quantity }}</td>
