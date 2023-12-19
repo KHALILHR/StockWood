@@ -87,7 +87,7 @@ class SaleBill(models.Model):
     phone = models.CharField(max_length=12)
     address = models.CharField(max_length=200)
     email = models.EmailField(max_length=254)
-    gstin = models.CharField(max_length=15)
+    gstin = models.CharField(max_length=30)
     sale_type = models.CharField(max_length=20, choices=SALE_TYPE_CHOICES, default='quantity')
     
     # New field for facture and bon de livraison
@@ -134,8 +134,8 @@ class SaleItem(models.Model):
     billno = models.ForeignKey(SaleBill, on_delete=models.CASCADE, related_name='salebillno')
     stock = models.ForeignKey(Stock, on_delete=models.CASCADE, related_name='saleitem')
     cubic_meter = models.DecimalField(max_digits=10, decimal_places=3, blank=True, null=True)
-    perprice = models.DecimalField(max_digits=10, decimal_places=2, default=0)
-    totalprice = models.DecimalField(max_digits=10, decimal_places=2, default=0)
+    perprice = models.DecimalField(max_digits=10, decimal_places=3, default=0)
+    totalprice = models.DecimalField(max_digits=30, decimal_places=3, default=0)
     quantity = models.DecimalField(max_digits=10, decimal_places=3, default=0)
 
     def __str__(self):
@@ -175,7 +175,7 @@ class Offer(models.Model):
     phone = models.CharField(max_length=12)
     address = models.CharField(max_length=200)
     email = models.EmailField(max_length=254)
-    gstin = models.CharField(max_length=15)
+    gstin = models.CharField(max_length=30)
     sale_type = models.CharField(max_length=20, choices=SALE_TYPE_CHOICES, default='quantity')
 
     def __str__(self):
@@ -195,8 +195,9 @@ class OfferItem(models.Model):
     offer_no = models.ForeignKey(Offer, on_delete=models.CASCADE, related_name='offer_items')
     stock = models.ForeignKey(Stock, on_delete=models.CASCADE, related_name='offer_items')
     cubic_meter = models.DecimalField(max_digits=10, decimal_places=3, blank=True, null=True)
-    per_price = models.DecimalField(max_digits=10, decimal_places=2, default=0)
-    total_price = models.DecimalField(max_digits=10, decimal_places=2, default=0)
+    per_price = models.DecimalField(max_digits=10, decimal_places=3, default=0)
+    total_price = models.DecimalField(max_digits=30, decimal_places=3, default=0)
+
     quantity = models.DecimalField(max_digits=10, decimal_places=3, default=0)
 
     def __str__(self):

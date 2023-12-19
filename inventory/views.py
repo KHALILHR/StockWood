@@ -140,5 +140,3 @@ def all_stock(request):
         stocks = paginator.page(paginator.num_pages)
 
     return render(request, 'all_stock.html', {'stocks': stocks, 'total_quantity': total_quantity, 'total_cubic_meters': total_cubic_meters})
-
-

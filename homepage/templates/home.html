@@ -79,33 +79,47 @@
 
     <!-- Loading Chart JS -->
     <script src="{% static 'js/Chart.min.js' %}"></script>  
-    <script>
-        Chart.defaults.global.defaultFontColor = '#3c3c3c';
+<script>
+    Chart.defaults.global.defaultFontColor = '#3c3c3c';
 
-        //configuration for the bar graph
-        var barConfig = {
-            type: 'bar',
-            data: {
-                datasets: [{
-                    backgroundColor: '#1a79a5',
-                    label: 'Colis Dans Stock',
-                    data: {{ data|safe }},
-                }],
-                labels: {{ labels|safe }}
-            },
-            options: {
-                responsive: true,
-                maintainAspectRatio: false,
-            },
-        };
+    // Function to generate a random color
+    function getRandomColor() {
+        var letters = '0123456789ABCDEF';
+        var color = '#';
+        for (var i = 0; i < 6; i++) {
+            color += letters[Math.floor(Math.random() * 16)];
+        }
+        return color;
+    }
 
+    // Configuration for the bar graph
+    var barConfig = {
+        type: 'bar',
+        data: {
+            datasets: [{
+                label: 'Colis Dans Stock',
+                data: {{ data|safe }},
+                backgroundColor: [],  // Leave it as an empty array
+            }],
+            labels: {{ labels|safe }}
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+        },
+    };
 
-        //runs all charts on loading the webpage
-        window.onload = function() {
-            var ctx = document.getElementById('bar-graph').getContext('2d');
-            window.BarStock = new Chart(ctx, barConfig);
-        };
+    // Generate random colors for each dataset
+    barConfig.data.datasets[0].backgroundColor = barConfig.data.datasets[0].data.map(function() {
+        return getRandomColor();
+    });
 
-    </script>
+    // Runs all charts on loading the webpage
+    window.onload = function() {
+        var ctx = document.getElementById('bar-graph').getContext('2d');
+        window.BarStock = new Chart(ctx, barConfig);
+    };
+</script>
+
 
 {% endblock content %}

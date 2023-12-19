@@ -454,10 +454,10 @@ from .models import Offer, OfferItem, Stock
 from django.contrib import messages
 from .models import Offer
 
-# views.py
 from django.shortcuts import render
 from django.views import View
-from .forms import OfferSearchForm
+from .models import Offer
+from .forms import OfferSearchForm  # Import your OfferSearchForm
 
 class OfferListView(View):
     template_name = 'sales/offer_list.html'
@@ -478,10 +478,13 @@ class OfferListView(View):
             # If form is not valid, show all offers
             offers = Offer.objects.all()
 
-        context = {'offers': offers, 'form': form}
+        # Reverse the order of the offers queryset
+        reversed_offers = reversed(list(offers))
+
+        context = {'offers': reversed_offers, 'form': form}
         return render(request, self.template_name, context)
-     
-    
+       
+
 from django.shortcuts import render, redirect
 from django.views import View
 from .forms import OfferForm, OfferItemFormset

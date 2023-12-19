@@ -34,11 +34,11 @@
                                 <img src="{% static 'SAM.png' %}" alt="Company Logo" style="max-width: 150px; height: auto; margin-bottom: 20px;">
                             </div>
                         
-                            <!-- Company Title -->
+                            <!-- Company Title --><br><br><br>
                             <div style="float: right;">
                                 <p class="title" style="font-size: 1.5rem;"><strong>S.G.B : Le Client d'abord</strong></p>
                             </div>
-                        </div>
+                        </div><hr>
                         <div style="clear: both;"></div>
 
                                 <div class="frame" style="border: 1px solid #000; padding: 10px; text-align: center; margin-bottom: 40px; float: left; width: 45%;">
@@ -61,7 +61,7 @@
                                     </div>
                                 </div>
                                 
-                                <div class="frame" style="border: 1px solid #000; padding: 10px; text-align: center; margin-bottom: 20px; float: right; width: 45%;">
+                                <div class="frame" style="border: 1px solid #000; padding: 20px; text-align: center; margin-bottom: 20px; float: right; width: 45%;">
                                     <div class="header" style="margin-bottom: 20px;">
                                         <p class="subtitle" style="font-size: 0.7rem; float: left;"> Date: <span id="formattedDate"></span></p>
                                         <p class="title" style="font-size: 1.5rem;"><strong>Mr. {{ bill.name }} </strong></p>
@@ -104,9 +104,7 @@
                                         border: 1px solid #ddd;
                                     }
                                 
-                                    .inner-box-header {
-                                        background-color: #ADD8E6;
-                                    }
+                                   
                                 
                                     
                                 
@@ -119,7 +117,7 @@
                                 
                                 <table class="outer-box">
                                     <thead>
-                                        <tr class="inner-box inner-box-header">
+                                        <tr class="inner-box inner-box-header" style="background-color: #c7c9ca;  -webkit-print-color-adjust: exact;">
                                             <th style="width: 5%;">Ref</th>
                                             <th style="width: 17%;">N° Colis</th>   
                                             <th style="width: 30%;">Article</th>
@@ -147,7 +145,7 @@
                                                         &nbsp; <strong>{{ item.cubic_meter }}</strong> m³
                                                     {% endif %}
                                                 </td>
-                                                <td class="inner-box total-item">&nbsp; <strong>{{ item.totalprice|floatformat:0|format_price }}</strong></td>
+                                                <td class="inner-box total-item">&nbsp; <strong>{{ item.totalprice|floatformat:0|format_price }}</strong> DT</td>
                                             </tr>
                                         {% endfor %}
                                         <tr class="inner-box inner-box-total">
@@ -163,7 +161,7 @@
                                                 {% endif %}
                                             </td>
                                             
-                                            <td class="inner-box total-all">&nbsp; <strong><span id="totalAllValue"></span></strong></td>
+                                            <td class="inner-box total-all" style="background-color: #d9e8f0; -webkit-print-color-adjust: exact;">&nbsp; <strong><span id="totalAllValue"></span></strong> DT</td>
                                         </tr>
                                     </tbody>
                                     
@@ -175,11 +173,11 @@
                                     <tbody>
                                         <tr>
                                             <th class="inner-box" style="width: 30%;">&nbsp;Total HT</th>
-                                            <td class="inner-box" style="width: 30%;">&nbsp;<strong><span id="totalAllValueTop"></span></strong></td>
+                                            <td class="inner-box" style="width: 30%;">&nbsp;<strong><span id="totalAllValueTop"></span></strong> DT</td>
                                         </tr>
                                         <tr>
                                             <th class="inner-box" style="width: 30%;">&nbsp;TVA 19.0%</th>
-                                            <td class="inner-box" style="width: 30%;">&nbsp;<strong><span id="tvaValue">{% if billdetails.cgst %}{{ billdetails.cgst|floatformat:3 }}{% endif %}</span></strong></td>
+                                            <td class="inner-box" style="width: 30%;">&nbsp;<strong><span id="tvaValue">{% if billdetails.cgst %}{{ billdetails.cgst|floatformat:3 }}{% endif %}</span></strong> DT</td>
                                         </tr>
                                 
                                         <!-- Repeat the same structure for FODEC, Timber, TOTAL HTVA -->
@@ -187,12 +185,12 @@
                                 
                                         <tr>
                                             <th class="inner-box" style="width: 30%;">&nbsp;Timber 1.000</th>
-                                            <td class="inner-box" style="width: 30%;">&nbsp;<strong><span>1.000</span></strong></td>
+                                            <td class="inner-box" style="width: 30%;">&nbsp;<strong><span>1.000</span></strong> DT</td>
                                         </tr>
                                 
                                         <tr class="inner-box inner-box-total">
-                                            <th class="inner-box" style="background-color: yellow; ">&nbsp;Net à Payer : </th>
-                                            <th class="inner-box">&nbsp;<span id="totalHTVAValue">{% if billdetails.total %}{{ billdetails.total|floatformat:3 }}{% endif %} </span></th>
+                                            <th class="inner-box" style="background-color: yellow; -webkit-print-color-adjust: exact;">&nbsp;Net à Payer : </th>
+                                            <th class="inner-box" style="background-color: yellow; -webkit-print-color-adjust: exact;">&nbsp;<span id="totalHTVAValue">{% if billdetails.total %}{{ billdetails.total|floatformat:3 }}{% endif %} </span> DT</th>
                                         </tr>
                                     </tbody>
                                 </table><br><br><br><br>
@@ -213,7 +211,8 @@
 
                                         </div>
                                     </div>
-
+                                    <center><small><i>Sam Global Business: 000, ROUTE TUNIS KM 4 , NABEUL 8000 – E-mail : contact.SGB.BOIS@gmail.com</i> </small></center>
+                                    <hr>
                                 
                                 </div>
                                 </div>
