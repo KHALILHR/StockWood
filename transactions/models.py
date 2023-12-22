@@ -194,8 +194,8 @@ class Offer(models.Model):
 class OfferItem(models.Model):
     offer_no = models.ForeignKey(Offer, on_delete=models.CASCADE, related_name='offer_items')
     stock = models.ForeignKey(Stock, on_delete=models.CASCADE, related_name='offer_items')
-    cubic_meter = models.DecimalField(max_digits=10, decimal_places=3, blank=True, null=True)
-    per_price = models.DecimalField(max_digits=10, decimal_places=3, default=0)
+    cubic_meter = models.DecimalField(max_digits=30, decimal_places=3, blank=True, null=True)
+    per_price = models.DecimalField(max_digits=30, decimal_places=3, default=0)
     total_price = models.DecimalField(max_digits=30, decimal_places=3, default=0)
 
     quantity = models.DecimalField(max_digits=10, decimal_places=3, default=0)
