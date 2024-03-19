@@ -256,13 +256,10 @@ class SaleCreateView(View):
 
         if form.is_valid() and formset.is_valid():
             billobj = form.save(commit=False)
-       
             billobj.save()
-            stock_error = False
-            billobj.save()
-           
+
             for form_item in formset:
-                billitem = form_item.save(commit=False) 
+                billitem = form_item.save(commit=False)
                 stock = get_object_or_404(Stock, name=billitem.stock.name)
 
                 if billobj.sale_type == 'cubic_meter':
@@ -271,12 +268,25 @@ class SaleCreateView(View):
                         stock_error = True
                         break
                     stock.cubic_meter -= billitem.cubic_meter
-                else:  # 'quantity' sale type
+                elif billobj.sale_type == 'quantity':
                     billitem.totalprice = billitem.perprice * billitem.quantity
                     if billitem.quantity > stock.quantity:
                         stock_error = True
                         break
                     stock.quantity -= billitem.quantity
+                elif billobj.sale_type == 'both':
+                    if not math.isnan(billitem.quantity) and billitem.quantity != 0:
+                        billitem.totalprice = billitem.quantity * billitem.perprice
+                        if billitem.quantity > stock.quantity:
+                            stock_error = True
+                            break
+                        stock.quantity -= billitem.quantity
+                    elif not math.isnan(billitem.cubic_meter) and billitem.cubic_meter != 0:
+                        billitem.totalprice = billitem.cubic_meter * billitem.perprice
+                        if billitem.cubic_meter > stock.cubic_meter:
+                            stock_error = True
+                            break
+                        stock.cubic_meter -= billitem.cubic_meter
 
                 billitem.billno = billobj  # Assign the Sale object to the SaleItem's billno field
                 billitem.save()
@@ -288,31 +298,53 @@ class SaleCreateView(View):
                 messages.error(request, error_message)
                 return render(request, self.template_name, context)
             else:
-                 billobj.save()  # Save the Sale object along with SaleBillDetails
-                 billdetailsobj = SaleBillDetails(billno=billobj)
-                 billdetailsobj.save()
-                 messages.success(request, "Sold items have been registered successfully")
-                 return redirect('sale-bill', billno=billobj.billno)
+                billobj.save()  # Save the Sale object along with SaleBillDetails
+                billdetailsobj = SaleBillDetails(billno=billobj)
+                billdetailsobj.save()
+                messages.success(request, "Sold items have been registered successfully")
+                return redirect('sale-bill', billno=billobj.billno)
 
         return render(request, self.template_name, context)
 
 
-
-
 # used to delete a bill object
+from django.db import transaction
+from django.http import HttpResponseRedirect
+
 class SaleDeleteView(SuccessMessageMixin, DeleteView):
     model = SaleBill
     template_name = "sales/delete_sale.html"
     success_url = '/transactions/sales'
     
+    @transaction.atomic
     def delete(self, *args, **kwargs):
         self.object = self.get_object()
+        
+        # Retrieve all related sale items associated with the sale bill being deleted
         items = SaleItem.objects.filter(billno=self.object.billno)
+        
+        # Loop through each related sale item
         for item in items:
-            stock = get_object_or_404(Stock, name=item.stock.name)
+            stock = Stock.objects.get(name=item.stock.name)
             
+            # Restore the stock quantity or cubic meter based on the sale type
+            if self.object.sale_type == 'cubic_meter':
+                stock.cubic_meter += item.cubic_meter
+            elif self.object.sale_type == 'quantity':  # 'quantity' sale type
+                stock.quantity += item.quantity
+            else:  # 'both' sale type
+                stock.quantity += item.quantity
+                stock.cubic_meter += item.cubic_meter
+            # Save the updated stock object
+            stock.save()
+        
+        # Delete the sale bill object
+        self.object.delete()
+        
         messages.success(self.request, "Sale bill has been deleted successfully")
-        return super(SaleDeleteView, self).delete(*args, **kwargs)
+        
+        return HttpResponseRedirect(self.get_success_url())
+
 
 
 
@@ -529,15 +561,23 @@ class OfferCreateView(View):
                 cubic_meter = form_item.cleaned_data.get('cubic_meter')
                 quantity = form_item.cleaned_data.get('quantity')
                 per_price = form_item.cleaned_data.get('per_price')
-            
-                if billobj.sale_type == 'quantity' and not math.isnan(quantity):
+                
+                sale_type = form.cleaned_data.get('sale_type')
+
+                if sale_type == 'quantity' and not math.isnan(quantity):
                     billitem.total_price = quantity * per_price
-                elif not math.isnan(cubic_meter):
+                elif sale_type == 'cubic_meter' and not math.isnan(cubic_meter):
                     billitem.total_price = cubic_meter * per_price
+                elif sale_type == 'both':
+                    # If sale type is 'both', calculate based on the field that has a non-zero value
+                    if not math.isnan(quantity) and quantity != 0:
+                        billitem.total_price = quantity * per_price
+                    elif not math.isnan(cubic_meter) and cubic_meter != 0:
+                        billitem.total_price = cubic_meter * per_price
 
                 billitem.save()
 
-            messages.success(request, "Offer items have been registered successfully")
+            messages.success(request, "Les éléments de l'offre ont été enregistrés avec succès")
             return redirect('offer-bill', offer_no=billobj.offer_no)
 
         # If the form or formset is not valid, return the response

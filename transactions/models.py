@@ -65,6 +65,8 @@ class PurchaseBillDetails(models.Model):
 	    return "Bill no: " + str(self.billno.billno)
 from django.db.models import Max
 
+from django.db import models, transaction
+
 class LastFactureNumber(models.Model):
     last_facture_number = models.IntegerField(default=0)
 
@@ -72,6 +74,8 @@ class SaleBill(models.Model):
     SALE_TYPE_CHOICES = [
         ('quantity', 'Sale per Quantity'),
         ('cubic_meter', 'Sale per Cubic Meter'),
+        ('both', 'Both Quantity and Cubic Meter'),
+
     ]
 
     EXTRA_OPTIONS_CHOICES = [
@@ -84,10 +88,11 @@ class SaleBill(models.Model):
     numero_facture = models.IntegerField(default=0)
 
     name = models.CharField(max_length=150)
-    phone = models.CharField(max_length=12)
-    address = models.CharField(max_length=200)
-    email = models.EmailField(max_length=254)
-    gstin = models.CharField(max_length=30)
+    phone = models.CharField(max_length=12, blank=True)
+    address = models.CharField(max_length=200, blank=True)
+    email = models.EmailField(max_length=254, blank=True)  # Allow blank values
+
+    gstin = models.CharField(max_length=30, blank=True)
     sale_type = models.CharField(max_length=20, choices=SALE_TYPE_CHOICES, default='quantity')
     
     # New field for facture and bon de livraison
@@ -108,6 +113,19 @@ class SaleBill(models.Model):
                 last_facture_number_obj.save()
 
         super().save(*args, **kwargs)
+
+    @transaction.atomic
+    def delete(self, *args, **kwargs):
+        # Before deleting the sale bill, decrement the facture number
+        if self.extra_options == 'facture_bon_livraison':
+            last_facture_number_obj = LastFactureNumber.objects.first()
+            if last_facture_number_obj:
+                last_facture_number_obj.last_facture_number -= 1
+                last_facture_number_obj.save()
+    
+
+        super().delete(*args, **kwargs)
+
         
 
 
@@ -134,7 +152,7 @@ class SaleItem(models.Model):
     billno = models.ForeignKey(SaleBill, on_delete=models.CASCADE, related_name='salebillno')
     stock = models.ForeignKey(Stock, on_delete=models.CASCADE, related_name='saleitem')
     cubic_meter = models.DecimalField(max_digits=10, decimal_places=3, blank=True, null=True)
-    perprice = models.DecimalField(max_digits=10, decimal_places=3, default=0)
+    perprice = models.DecimalField(max_digits=15, decimal_places=3, default=0)
     totalprice = models.DecimalField(max_digits=30, decimal_places=3, default=0)
     quantity = models.DecimalField(max_digits=10, decimal_places=3, default=0)
 
@@ -167,15 +185,17 @@ class Offer(models.Model):
     SALE_TYPE_CHOICES = [
         ('quantity', 'Quantity'),
         ('cubic_meter', 'Cubic Meter'),
+        ('both', 'Both Quantity and Cubic Meter'),
+
     ]
     offer_no = models.AutoField(primary_key=True)
     time = models.DateTimeField(auto_now=True)
 
     name = models.CharField(max_length=150)
-    phone = models.CharField(max_length=12)
-    address = models.CharField(max_length=200)
-    email = models.EmailField(max_length=254)
-    gstin = models.CharField(max_length=30)
+    phone = models.CharField(max_length=12, blank=True)
+    address = models.CharField(max_length=200, blank=True)
+    email = models.EmailField(max_length=254, blank=True)
+    gstin = models.CharField(max_length=30, blank=True)
     sale_type = models.CharField(max_length=20, choices=SALE_TYPE_CHOICES, default='quantity')
 
     def __str__(self):
@@ -198,7 +218,7 @@ class OfferItem(models.Model):
     per_price = models.DecimalField(max_digits=30, decimal_places=3, default=0)
     total_price = models.DecimalField(max_digits=30, decimal_places=3, default=0)
 
-    quantity = models.DecimalField(max_digits=10, decimal_places=3, default=0)
+    quantity = models.DecimalField(max_digits=10, decimal_places=3, null=True,blank=True, default=0)
 
     def __str__(self):
         return "Offer no: " + str(self.offer_no.offer_no) + ", Item = " + self.stock.name

@@ -75,6 +75,7 @@
             <div class="panel-body">
                 {% for iform in formset %}
                 <div class="row form-row">
+                    
                     <div class="form-group col-md-3">
                         {{ iform.stock.errors }}
                         <label class="panel-body-text">Colis N°:</label>
@@ -176,13 +177,12 @@ function deleteForm(prefix, btn) {
             });
         }
         total--;
-        location.reload(true);
-
     } else {
         custom_alert.render('Field cannot be deleted');
     }
     return false;
 }
+
 
 
 $(document).on('click', '.add-form-row', function(e) {
@@ -215,55 +215,63 @@ var stocks = [
 $(document).ready(function() {
     // Initial setup based on the selected sale type
     updateSaleTypeFields();
-
+ 
     // Update fields when the sale type changes
-    $('input[name="sale_type"]').change(function() {
-        updateSaleTypeFields();
-    });
-
-    function updateSaleTypeFields() {
-        var saleType = $('input[name="sale_type"]:checked').val();
-    
-        // Show/hide fields based on sale type
-        if (saleType === 'quantity') {
-            $('.quantity').closest('.form-group').show().find('.quantity').prop('required', true);
-        } else {
-            $('.cubic_meter').closest('.form-group').show().find('.cubic_meter').prop('required', true);
-        }
-    }
-});
-
-$(document).on('input', '.setprice, .cubic_meter, .quantity', function(e) {
+    // Update fields when the sale type changes
+ $('input[name="sale_type"]').change(function () {
+     updateSaleTypeFields();
+ });
+ 
+ function updateSaleTypeFields() {
+     var saleType = $('input[name="sale_type"]:checked').val();
+ 
+     // Show/hide fields based on sale type
+     if (saleType === 'quantity') {
+         $('.quantity').closest('.form-group').show().find('.quantity').prop('required', true);
+         $('.cubic_meter').closest('.form-group').hide().find('.cubic_meter').prop('required', false);
+     } else if (saleType === 'cubic_meter') {
+         $('.cubic_meter').closest('.form-group').show().find('.cubic_meter').prop('required', true);
+         $('.quantity').closest('.form-group').hide().find('.quantity').prop('required', false);
+     } else {
+         // For the 'both' option, both fields should be visible
+         $('.quantity').closest('.form-group').show().find('.quantity').prop('required', true);
+         $('.cubic_meter').closest('.form-group').show().find('.cubic_meter').prop('required', true);
+     }
+ }
+ 
+ });
+ 
+ $(document).on('input', '.per_price, .cubic_meter, .quantity', function(e) {
     var element = $(this);
     var row = element.closest('.form-row');
     var saleType = $('input[name="sale_type"]:checked').val();
-
-    // Show/hide fields based on sale type
-    if (saleType === 'quantity') {
-        $('.quantity').closest('.form-group').show().find('.quantity').prop('required', true);
-    } else {
-        $('.cubic_meter').closest('.form-group').show().find('.cubic_meter').prop('required', true);
-    }
-
+ 
     var cubic_meter = parseFloat(row.find('.cubic_meter').val());
     var quantity = parseFloat(row.find('.quantity').val());
-    var perprice = parseFloat(row.find('.price').val());
-
+    var perprice = parseFloat(row.find('.per_price').val());
+ 
     if (!isNaN(perprice)) {
         var tprice;
-
+ 
         // Calculate total based on sale type
         if (saleType === 'quantity' && !isNaN(quantity)) {
             tprice = quantity * perprice;
-        } else if (!isNaN(cubic_meter)) {
+        } else if (saleType === 'cubic_meter' && !isNaN(cubic_meter)) {
             tprice = cubic_meter * perprice;
+        } else if (saleType === 'both' && !isNaN(perprice)) {
+            // If both quantity and cubic meter are entered, use the one with non-zero value
+            if (!isNaN(quantity) && quantity !== 0) {
+                tprice = quantity * perprice;
+            } else if (!isNaN(cubic_meter) && cubic_meter !== 0) {
+                tprice = cubic_meter * perprice;
+            }
         }
-
+ 
         row.find('.totalprice').val(tprice || '');
     }
-});
+ });
 
+ 
 
     </script>
-
 {% endblock content %}

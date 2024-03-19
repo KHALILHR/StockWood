@@ -44,7 +44,7 @@
                                 <div class="frame" style="border: 1px solid #000; padding: 10px; text-align: center; margin-bottom: 40px; float: left; width: 45%;">
                                     <div class="header" style="margin-bottom: 20px;">
                                         <p class="title" style="font-size: 1.5rem;"><strong>Facture</strong></p>
-                                        <p class="subtitle"style="font-size: 0.8rem;"> <strong>Numéro : {{ bill.numero_facture}}/{{ bill.time.date|date:"m" }}</strong></p>
+                                        <p class="subtitle"style="font-size: 0.8rem;"> <strong>Numéro : {{ bill.numero_facture}}/{{ bill.time.date|date:"y" }}</strong></p>
 
                                         <hr>
                                         <div class="subtitle-container" style="text-align: center;">
@@ -64,7 +64,7 @@
                                 <div class="frame" style="border: 1px solid #000; padding: 20px; text-align: center; margin-bottom: 20px; float: right; width: 45%;">
                                     <div class="header" style="margin-bottom: 20px;">
                                         <p class="subtitle" style="font-size: 0.7rem; float: left;"> Date: <span id="formattedDate"></span></p>
-                                        <p class="title" style="font-size: 1.5rem;"><strong>Mr. {{ bill.name }} </strong></p>
+                                        <p class="title" style="font-size: 1.5rem;"><strong>{{ bill.name }} </strong></p>
                                         <hr>
                                         <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 5px;">
                                             
@@ -134,16 +134,24 @@
                                                 <td class="inner-box">&nbsp; Colis N°:{{ item.stock.name }}</td>
                                                 <td class="inner-box" >
                                                     &nbsp;<strong>{{ item.stock.wood_type }}</strong>
-                                                    <strong>EP</strong> {{ item.stock.thickness }} mm/<strong>LG</strong> {{ item.stock.length }} m
+                                                    <strong>EP</strong> {{ item.stock.thickness }} mm/<strong>LG</strong> {{ item.stock.length }} Cm
                                                 </td>
                                                 
                                                 <td class="inner-box">&nbsp; <strong>{{ item.perprice|floatformat:0|format_price }}</strong> DT</td>
                                                 <td class="inner-box">
                                                     {% if bill.sale_type == 'quantity' %}
+                                                    {% if item.quantity > 0 %}
                                                         &nbsp; <strong>{{ item.quantity|floatformat:0 }}</strong> Piece
                                                     {% else %}
                                                         &nbsp; <strong>{{ item.cubic_meter }}</strong> m³
                                                     {% endif %}
+                                                {% else %}
+                                                    {% if item.cubic_meter > 0 %}
+                                                        &nbsp; <strong>{{ item.cubic_meter }}</strong> m³
+                                                    {% else %}
+                                                        &nbsp; <strong>{{ item.quantity|floatformat:0 }}</strong> Piece
+                                                    {% endif %}
+                                                {% endif %}
                                                 </td>
                                                 <td class="inner-box total-item">&nbsp; <strong>{{ item.totalprice|floatformat:0|format_price }}</strong> DT</td>
                                             </tr>
@@ -151,22 +159,15 @@
                                         <tr class="inner-box inner-box-total">
                                             <th class="inner-box">&nbsp;TOTAL</th>
                                             <td class="inner-box" colspan="1">{{ items|length }} Colis</td>
-                                            <td class="inner-box" colspan="2"></td>
+                                            <td class="inner-box" colspan="3"></td>
 
-                                            <td class="inner-box total-cubic-meter" >
-                                                {% if bill.sale_type == 'quantity' %}
-                                                    &nbsp; <strong><span id="totalQuantityValue">{{ total_quantity }}</span></strong> Piece
-                                                {% else %}
-                                                    &nbsp; <strong><span id="totalCubicMeterValue">{{ total_cubic_meter }}</span></strong> m³
-                                                {% endif %}
-                                            </td>
                                             
-                                            <td class="inner-box total-all" style="background-color: #d9e8f0; -webkit-print-color-adjust: exact;">&nbsp; <strong><span id="totalAllValue"></span></strong> DT</td>
+                                            
+                                            <td class="inner-box total-all">&nbsp; <strong><span id="totalAllValue"></span></strong> DT</td>
                                         </tr>
                                     </tbody>
                                     
                                 </table><br>
-                                <strong><center><p>Suite votre demande du, nous avons le plaisir de vous faire l'offre suivante:</p></center></strong>
 
                                 <!-- Offer Calculations -->
                                 <table class="outer-box tax-calculation-table">
@@ -189,16 +190,16 @@
                                         </tr>
                                 
                                         <tr class="inner-box inner-box-total">
-                                            <th class="inner-box" style="background-color: yellow; -webkit-print-color-adjust: exact;">&nbsp;Net à Payer : </th>
-                                            <th class="inner-box" style="background-color: yellow; -webkit-print-color-adjust: exact;">&nbsp;<span id="totalHTVAValue">{% if billdetails.total %}{{ billdetails.total|floatformat:3 }}{% endif %} </span> DT</th>
+                                            <th class="inner-box">&nbsp;Net à Payer : </th>
+                                            <th class="inner-box">&nbsp;<span id="totalHTVAValue">{% if billdetails.total %}{{ billdetails.total|floatformat:3 }}{% endif %} </span> DT</th>
                                         </tr>
                                     </tbody>
-                                </table><br><br><br><br>
+                                </table><br><br>
                                 <!--text finale de offer-->
                                
-                                    <p>Dans l'attente d'être honoré par votre commande, cordiales salutations</p>
+                                    
                                 
-                                    <br><br>
+                                    
                                     <div class="frame" style="border: 1px solid #000; padding: 10px; text-align: center; margin-bottom: 20px; float: left; width: 100%;">
                                         <div class="header" style="margin-bottom: 20px;">
                                            

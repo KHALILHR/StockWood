@@ -18,7 +18,7 @@ class StockListView(FilterView):
     filterset_class = StockFilter
     queryset = Stock.objects.filter(is_deleted=False)
     template_name = 'inventory.html'
-    paginate_by = 10
+    
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -128,7 +128,7 @@ def all_stock(request):
     total_cubic_meters = stock_list.aggregate(Sum('cubic_meter'))['cubic_meter__sum'] or 0
 
     page = request.GET.get('page', 1)
-    paginator = Paginator(stock_list, 10)  # Show 10 stocks per page
+    paginator = Paginator(stock_list, 9999999999)  # Show 10 stocks per page
 
     try:
         stocks = paginator.page(page)
