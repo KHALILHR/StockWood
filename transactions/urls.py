@@ -1,5 +1,5 @@
 from django.urls import path
-from django.conf.urls import url
+""" from django.conf.urls import url """
 from . import views
 
 urlpatterns = [
@@ -16,6 +16,7 @@ urlpatterns = [
     
     path('sales/', views.SaleView.as_view(), name='sales-list'),
     path('sales/new', views.SaleCreateView.as_view(), name='new-sale'),
+    path('sales/<pk>/edit', views.SalleUpdateView.as_view(), name='edit-sales'),
     path('sales/<pk>/delete', views.SaleDeleteView.as_view(), name='delete-sale'),
 
     path("purchases/<billno>", views.PurchaseBillView.as_view(), name="purchase-bill"),

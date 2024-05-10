@@ -27,10 +27,12 @@ from .forms import (
     SupplierForm, 
     SaleForm,
     SaleItemFormset,
-    SaleDetailsForm
+    SaleDetailsForm,
+    
 )
 from inventory.models import Stock
-
+from .models import SaleBill
+from django.urls import reverse_lazy
 
 
 
@@ -306,6 +308,24 @@ class SaleCreateView(View):
 
         return render(request, self.template_name, context)
 
+class SalleUpdateView(SuccessMessageMixin, UpdateView):
+    model = SaleBill
+    form_class = SaleForm
+    template_name = "sales/update_sale.html"
+    success_url = reverse_lazy('sales-list')
+    success_message = "Sale has been updated successfully"
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["title"] = 'Edit Sale'
+        context["savebtn"] = 'Update Sale'
+        context["delbtn"] = 'Delete Sale'
+        return context
+
+    def form_valid(self, form):
+        # This method handles form submission and saves changes to the existing record
+        form.save()  # Save the form to update the record
+        return super().form_valid(form)  # Return the default behavior after saving
 
 # used to delete a bill object
 from django.db import transaction

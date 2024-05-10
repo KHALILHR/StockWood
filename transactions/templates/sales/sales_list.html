@@ -61,6 +61,7 @@
                             <td class="align-middle">
                                 <a href="{% url 'generate-facture' sale.pk %}" class="btn btn-primary btn-sm">Facture</a>
                                 <a href="{% url 'sale-bill' sale.billno %}" class="btn btn-secondary btn-sm">Bon de Livraison</a>
+                                <a href="{% url 'edit-sales' sale.billno %}" class="btn btn-secondary btn-sm">Update</a>
                                 <a href="{% url 'delete-sale' sale.pk %}" class="btn btn-danger btn-sm">
                                     <i class="fas fa-trash"></i>
                                 </a>
@@ -99,6 +100,7 @@
                             <td class="align-middle">{{ sale.time.date }}</td>
                             <td class="align-middle">
                                 <a href="{% url 'sale-bill' sale.billno %}" class="btn btn-secondary btn-sm">Bon de Livraison</a>
+                                <a href="{% url 'edit-sales' sale.billno %}" class="btn btn-secondary btn-sm">Update</a>
                                 <a href="{% url 'delete-sale' sale.pk %}" class="btn btn-danger btn-sm">
                                     <i class="fas fa-trash"></i>
                                 </a>

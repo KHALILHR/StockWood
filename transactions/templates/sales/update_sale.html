@@ -1,0 +1,137 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %} Update Sale {% endblock title %}
+
+{% block content %}
+{% if messages %}
+    <div class="alert alert-success" role="alert">
+        {% for message in messages %}
+            {{ message }}
+            <br> {# Add a line break between messages #}
+        {% endfor %}
+        <hr>
+        <button type="button" class="btn btn-secondary" data-dismiss="alert">Close</button>
+    </div>
+{% endif %}
+
+<div style="color:#575757; font-style: bold; font-size: 3rem; border-bottom: 1px solid white;">Mettre à Jour La Vente</div>
+<br>
+
+<form method="post" class="panel panel-default" enctype="multipart/form-data">
+    {% csrf_token %}
+    {{ form.non_field_errors }}
+    
+    <div class="panel-body">
+        <div class="panel-heading panel-heading-text">Détail De Facturation</div>
+        <div class="form-group">
+            <label class="panel-body-text">Générer:</label>
+            {{ form.extra_options }}
+        </div>
+        <hr>
+        
+        <div class="panel-heading panel-heading-text">Détail Du Client(e)</div>
+        {{ form.name.errors }}
+        {{ form.phone.errors }}
+        {{ form.email.errors }}
+        {{ form.address.errors }}
+        {{ form.gstin.errors }}
+        
+        <div class="form-group">
+            <label for="{{ form.name.id_for_label }}" class="panel-body-text">Nom Du Client(e):</label>
+            {{ form.name }}
+        </div>
+        
+        <div class="form-row">
+            <div class="form-group col-md-6">
+                <label for="{{ form.phone.id_for_label }}" class="panel-body-text">Tél No:</label>
+                {{ form.phone }}
+            </div>
+            <div class="form-group col-md-6">
+                <label for="{{ form.email.id_for_label }}" class="panel-body-text">Email:</label>
+                {{ form.email }}
+            </div>
+        </div>
+        
+        <div class="form-group">
+            <label for="{{ form.address.id_for_label }}" class="panel-body-text">Adresse:</label>
+            {{ form.address }}
+        </div>
+        
+        <div class="form-group">
+            <label for="{{ form.gstin.id_for_label }}" class="panel-body-text">Matricule No:</label>
+            {{ form.gstin }}
+        </div>
+        
+        <div class="form-group">
+            <label class="panel-body-text">Type De Vente:</label>
+            {{ form.sale_type }}
+        </div>
+    </div>
+    
+    <hr>
+    
+    <div class="panel panel-default">
+        {{ formset.management_form }}
+        <div class="panel-heading panel-heading-text">Détail(s) De Coli(s)</div>
+        
+        <div id="stockitem">
+            <div class="panel-body">
+                {% for iform in formset %}
+                <div class="row form-row">
+                    <div class="form-group col-md-3">
+                        {{ iform.stock.errors }}
+                        <label class="panel-body-text">Colis N°:</label>
+                        {{ iform.stock }}
+                    </div>
+                    
+                    <div class="form-group col-md-2">
+                        <label class="panel-body-text">P.U:</label>
+                        {{ iform.perprice }}
+                    </div>
+                    
+                    <div class="form-group col-md-2">
+                        {{ iform.cubic_meter.errors }}
+                        <label class="panel-body-text">Meter Cube:</label>
+                        {{ iform.cubic_meter }}
+                    </div>
+                    
+                    <div class="form-group col-md-2">
+                        {{ iform.quantity.errors }}
+                        <label class="panel-body-text">Quantité:</label>
+                        {{ iform.quantity }}
+                    </div>
+                    
+                    <div class="form-group col-md-2">
+                        <center><label class="panel-body-text">Total:</label></center>
+                        <input type="text" class="textinput form-control totalprice" value="1" disabled required>
+                    </div>
+                    
+                    <div class="form-group col-md-1">
+                        <label class="panel-body-text">Supprimer:</label>
+                        <button class="form-control btn btn-danger remove-form-row">-</button>
+                    </div>
+                </div>
+                {% endfor %}
+                
+                <div style="text-align: right;">
+                    <a href="#" class="add-form-row">+ Ajouter Autre</a>
+                </div>
+            </div>
+        </div>
+        
+        <br>
+        <div class="align-middle">
+            <button type="submit" class="btn btn-primary">Mettre à Jour La Vente</button>
+            <a href="{% url 'sales-list' %}" class="btn btn-secondary">Annuler</a>
+        </div>
+    </div>
+</form>
+
+
+
+<script type="text/javascript" src="{% static 'js/jquery-3.2.1.slim.min.js' %}"></script>
+<script type="text/javascript" src="{% static 'js/dialogbox.js' %}"></script>
+<script type="text/javascript" src="{% static 'js/update_sale.js' %}"></script>
+
+{% endblock content %}
