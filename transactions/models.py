@@ -84,7 +84,7 @@ class SaleBill(models.Model):
     ]
 
     billno = models.AutoField(primary_key=True)
-    time = models.DateTimeField(auto_now=True)
+    time = models.DateTimeField()
     numero_facture = models.IntegerField(default=0)
 
     name = models.CharField(max_length=150)

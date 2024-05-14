@@ -51,6 +51,15 @@
 <div class="input-container">
     <input type="text" id="search-container" class="form-control" placeholder="Search by Stock Name, Wood Type, or Thickness">
 </div>
+<div class="input-container">
+    <select id="status-filter" class="form-control">
+        <option value="">Filter by Status</option>
+        <option value="STOCKED">Stocked</option>
+        <option value="OUT_OF_STOCK">Out of Stock</option>
+        <option value="OPEN">Open</option>
+    </select>
+</div>
+
 <button id="exportButton" class="btn btn-primary">
     <i class="fas fa-file-csv"></i> Export as CSV
 </button>
@@ -178,6 +187,24 @@ function downloadCSV() {
 document.getElementById('exportButton').addEventListener('click', function() {
     downloadCSV();
 });
+
+//filter 
+const statusFilter = document.getElementById("status-filter");
+
+statusFilter.addEventListener("change", () => {
+    const selectedStatus = statusFilter.value;
+
+    stocks.forEach(stock => {
+        const stockStatus = stock.querySelector('td:nth-child(8)').textContent.trim();
+
+        if (selectedStatus === "" || stockStatus === selectedStatus) {
+            stock.style.display = "table-row";
+        } else {
+            stock.style.display = "none";
+        }
+    });
+});
+
 </script>
 
 {% endblock content %}

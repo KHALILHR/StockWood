@@ -212,8 +212,8 @@ class SaleView(ListView):
     model = SaleBill
     template_name = "sales/sales_list.html"
     context_object_name = 'bills'
-    ordering = ['-time']
-    paginate_by = 10
+    ordering = ['-numero_facture']  # Sort by facture number
+    paginate_by = 1000
 
     def get_queryset(self):
         queryset = super().get_queryset()
@@ -224,6 +224,7 @@ class SaleView(ListView):
             queryset = queryset.filter(name__icontains=search_name)
 
         return queryset
+
 
 
 # used to generate a bill object and save items
@@ -308,6 +309,8 @@ class SaleCreateView(View):
 
         return render(request, self.template_name, context)
 
+from django.forms.models import inlineformset_factory
+
 class SalleUpdateView(SuccessMessageMixin, UpdateView):
     model = SaleBill
     form_class = SaleForm
@@ -320,12 +323,41 @@ class SalleUpdateView(SuccessMessageMixin, UpdateView):
         context["title"] = 'Edit Sale'
         context["savebtn"] = 'Update Sale'
         context["delbtn"] = 'Delete Sale'
+
+        # Get the instance of SaleBill
+        sale_bill_instance = self.get_object()
+
+        # Create the formset using inlineformset_factory
+        SaleItemFormSet = inlineformset_factory(
+            SaleBill,
+            SaleItem,
+            fields=('stock', 'cubic_meter', 'perprice', 'quantity'),  # Fields to display in the formset
+            extra=0,  # Number of extra forms to display
+        )
+
+        # If POST data is present, bind the formset with POST data and instance
+        if self.request.method == 'POST':
+            formset = SaleItemFormSet(self.request.POST, instance=sale_bill_instance)
+        else:
+            # If no POST data, just initialize the formset with the instance
+            formset = SaleItemFormSet(instance=sale_bill_instance)
+
+        context['formset'] = formset  # Assign formset to the context
+
         return context
 
     def form_valid(self, form):
         # This method handles form submission and saves changes to the existing record
-        form.save()  # Save the form to update the record
+        # Save the form to update the record
+        form.save()
+
+        # Get the formset from the context data
+        formset = self.get_context_data()['formset']
+        if formset.is_valid():
+            formset.save()
+
         return super().form_valid(form)  # Return the default behavior after saving
+
 
 # used to delete a bill object
 from django.db import transaction

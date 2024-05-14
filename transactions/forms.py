@@ -78,11 +78,10 @@ class SaleForm(forms.ModelForm):
         ('quantity', 'Sale per Quantity'),
         ('cubic_meter', 'Sale per Cubic Meter'),
         ('both', 'Both Quantity and Cubic Meter'),
-
     ]
 
     EXTRA_OPTIONS_CHOICES = [
-        ('facture_bon_livraison', 'Facture & Bon de Livraison'),
+        ('facture_bon_livraison', 'Facture and Bon de Livraison'),
         ('bon_de_livraison', 'Bon de Livraison'),
     ]
 
@@ -97,16 +96,20 @@ class SaleForm(forms.ModelForm):
         widget=forms.RadioSelect(attrs={'class': 'form-check-input'}),
         initial='bon_de_livraison',
     )
-  
+    time = forms.DateTimeField(
+        label='Time',
+        widget=forms.DateTimeInput(attrs={'class': 'form-control', 'type': 'date'}),
+    )
     class Meta:
         model = SaleBill
-        fields = ['name', 'phone', 'address', 'email', 'gstin', 'sale_type', 'extra_options']
+        fields = ['name', 'phone', 'address', 'email', 'gstin', 'sale_type', 'extra_options','time', 'numero_facture']
         widgets = {
             'name': forms.TextInput(attrs={'class': 'form-control'}),
             'phone': forms.TextInput(attrs={'class': 'form-control'}),
             'email': forms.EmailInput(attrs={'class': 'form-control'}),
             'address': forms.Textarea(attrs={'class': 'form-control', 'rows': '4'}),
             'gstin': forms.TextInput(attrs={'class': 'form-control'}),
+            'numero_facture': forms.NumberInput(attrs={'class': 'form-control'}),
         }
 
 # form used to render a single stock item form
@@ -129,8 +132,11 @@ class SaleItemForm(forms.ModelForm):
         Each choice consists of the stock name, its cubic meter, and its primary key.
         """
         queryset = Stock.objects.filter(is_deleted=False)
-        choices = [(stock.pk, f"{stock.name} ({stock.cubic_meter}m³)") for stock in queryset]
+        choices = [(stock.pk, f"{stock.name} ({stock.cubic_meter}m³, {stock.quantity} Piece)")
+           for stock in queryset if stock.cubic_meter != 0]
         return choices
+
+
 
     class Meta:
         model = SaleItem
@@ -209,8 +215,10 @@ class OfferItemForm(forms.ModelForm):
         Each choice consists of the stock name and its cubic meter.
         """
         queryset = Stock.objects.filter(is_deleted=False)
-        choices = [(stock.pk, f"{stock.name} ({stock.cubic_meter}m³)") for stock in queryset]
+        choices = [(stock.pk, f"{stock.name} ({stock.cubic_meter}m³, {stock.quantity} Piece)")
+           for stock in queryset if stock.cubic_meter != 0]
         return choices
+
 
     class Meta:
         model = OfferItem

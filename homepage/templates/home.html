@@ -17,20 +17,7 @@
     </div>
 
     <br>
-    <!-- Add this code to your template -->
-    {% if alerts %}
-    <div class="alert alert-warning alert-dismissable">
-        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-            <span aria-hidden="true">&times;</span>
-        </button>
-        <strong>Low Stock Alerts:</strong>
-        <ul>
-            {% for alert in alerts %}
-                <li style="color: #333;">{{ alert }}</li>
-            {% endfor %}
-        </ul>
-    </div>
-    {% endif %}
+    
     
 
     <div class="row">
