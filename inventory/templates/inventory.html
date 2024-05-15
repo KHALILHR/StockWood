@@ -8,17 +8,16 @@
 
 <style>
     .input-container {
-        margin-bottom: 20px; /* Add spacing below the input container */
+        margin-bottom: 20px;
         max-width: 300px;
-        
     }
 
     .table-bordered {
-        border: 1px solid #dee2e6; /* Updated border style */
+        border: 1px solid #dee2e6;
     }
 
     .table thead {
-        background-color: #f8f9fa; /* Header background color */
+        background-color: #f8f9fa;
     }
 
     .table th {
@@ -37,7 +36,7 @@
     }
 
     .container .btn {
-        margin-right: 5px; /* Adjust the button margin */
+        margin-right: 5px;
     }
 
     .no-records {
@@ -46,16 +45,25 @@
         font-size: 1.5rem;
         text-align: center;
     }
+
+    .filter-container {
+        margin-bottom: 10px;
+        text-align: right;
+    }
+
+    .container-filter-container {
+        margin-bottom: 20px;
+        max-width: 300px;
+    }
 </style>
 
 <br>
-<div class="row" style="color: #4e4e4e; font-style: bold; font-size: 3rem;">
-    <div class="col-md-8"  style="font-weight: bold;">Colis avec Contenaire </div>
+<div class="row" style="color: #4e4e4e; font-weight: bold; font-size: 3rem;">
+    <div class="col-md-8">Colis avec Contenaire</div>
     <div class="col-md-4" style="text-align: right;">
         <a class="btn btn-success" href="{% url 'new-stock' %}">
             <i class="fas fa-plus"></i> Ajouter Nouveau Colis
         </a>
-        
     </div>
 </div>
 
@@ -63,112 +71,130 @@
 
 <br>
 <div class="input-container">
-    <input type="text" id="search-container" class="form-control" placeholder="rechercher">
+    <input type="text" id="search-container" class="form-control" placeholder="Rechercher">
+</div>
+
+<div class="container-filter-container">
+    <label for="container-filter">Filter by Container:</label>
+    <select id="container-filter" class="form-control">
+        <option value="">All Containers</option>
+        {% for container in grouped_stocks %}
+            <option value="{{ container.container_name }}">{{ container.container_name }}</option>
+        {% endfor %}
+    </select>
 </div>
 
 <br>
 
 {% if grouped_stocks %}
     {% for container in grouped_stocks %}
-    
-        <table class="table table-bordered table-hover">
-            <thead class="thead-dark">
-                <tr>
-                    <td colspan="9" class="container-name">
-                        <center><strong>Nom Contenaire : {{ container.container_name }}</strong></center>
-                    </td>
-                </tr>
-                <tr>
-                    <th>Colis N°</th>
-                    <th>Quantity</th>
-                    <th>Type De Bois</th>       
-                    <th>Long</th>
-                    <th>Width</th>
-                    <th>Ep</th>
-                    <th>M3</th>
-                    <th>Status</th>
-                    <th>Actions</th>
-                </tr>
-            </thead>
-            <tbody>
-                {% for stock in container.stocks %}
+        <div class="container-table" data-container="{{ container.container_name }}">
+            <div class="filter-container">
+                <label for="status-filter-{{ forloop.counter }}">Filter by Status:</label>
+                <select id="status-filter-{{ forloop.counter }}" class="status-filter form-control" style="max-width: 200px; display: inline-block;">
+                    <option value="">All</option>
+                    <option value="STOCKED">STOCKED</option>
+                    <option value="OUT_OF_STOCK">OUT OF STOCK</option>
+                    <option value="OPEN">OPEN</option>
+                </select>
+            </div>
+
+            <table class="table table-bordered table-hover">
+                <thead class="thead-dark">
                     <tr>
-                        <td>{{ stock.name }}</td>
-                        <td>{{ stock.quantity }}</td>
-                        <td>{{ stock.wood_type }}</td>
-                        <td>{{ stock.length }}</td>
-                        <td>{{ stock.width }}</td>
-                        <td>{{ stock.thickness }}</td>
-                        <td>{{ stock.cubic_meter }} m3</td>
-                        <td style="color: 
-                            {% if stock.status == 'STOCKED' %}
-                                green;   <!-- Change the color to green when STOCKED -->
-                            {% elif stock.status == 'OUT_OF_STOCK' %}
-                                red;    <!-- Change the color to red when OUT_OF_STOCK -->
-                            {% else %}
-                                blue;  <!-- Change the color to blue for other statuses, assuming 'OPEN' status -->
-                            {% endif %}">
-                            {{ stock.status }}
-                        </td>
-                        <td>
-                            <a href="{% url 'edit-stock' stock.pk %}" class="btn btn-info btn-sm">
-                                <i class="fas fa-edit"></i> 
-                            </a>
-                            <a href="{% url 'delete-stock' stock.pk %}" class="btn btn-danger btn-sm">
-                                <i class="fas fa-trash"></i> 
-                            </a>
+                        <td colspan="9" class="container-name">
+                            <center><strong>Nom Contenaire : {{ container.container_name }}</strong></center>
                         </td>
                     </tr>
-                {% endfor %}
-                <tr class="totals-row">
-                    <td colspan="1"><strong>Total: </strong></td>
-                    <td colspan="5"><strong> <span class="total-quantity"></span></strong></td>
-                    <td colspan="3"><strong><span class="total-cubic-meters"></span> m3</strong></td>
-                </tr>
-            </tbody>
-        </table>
-     {% endfor %}
+                    <tr>
+                        <th>Colis N°</th>
+                        <th>Quantity</th>
+                        <th>Type De Bois</th>
+                        <th>Long</th>
+                        <th>Width</th>
+                        <th>Ep</th>
+                        <th>M3</th>
+                        <th>Status</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for stock in container.stocks %}
+                        <tr class="stock-row" data-status="{{ stock.status }}">
+                            <td>{{ stock.name }}</td>
+                            <td>{{ stock.quantity }}</td>
+                            <td>{{ stock.wood_type }}</td>
+                            <td>{{ stock.length }}</td>
+                            <td>{{ stock.width }}</td>
+                            <td>{{ stock.thickness }}</td>
+                            <td>{{ stock.cubic_meter }} m3</td>
+                            <td style="color: 
+                                {% if stock.status == 'STOCKED' %}
+                                    green;
+                                {% elif stock.status == 'OUT_OF_STOCK' %}
+                                    red;
+                                {% else %}
+                                    blue;
+                                {% endif %}">
+                                {{ stock.status }}
+                            </td>
+                            <td>
+                                <a href="{% url 'edit-stock' stock.pk %}" class="btn btn-info btn-sm">
+                                    <i class="fas fa-edit"></i>
+                                </a>
+                                <a href="{% url 'delete-stock' stock.pk %}" class="btn btn-danger btn-sm">
+                                    <i class="fas fa-trash"></i>
+                                </a>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                    <tr class="totals-row">
+                        <td colspan="1"><strong>Total: </strong></td>
+                        <td colspan="5"><strong><span class="total-quantity"></span></strong></td>
+                        <td colspan="3"><strong><span class="total-cubic-meters"></span> m3</strong></td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    {% endfor %}
 {% else %}
     <div class="no-records">
         The records are empty. Please try adding some.
     </div>
 {% endif %}
 
-
-
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.4.0/jspdf.umd.min.js"></script>
 
 <script>
     const searchInput = document.getElementById("search-container");
-    const containers = document.querySelectorAll('.table');
+    const containers = document.querySelectorAll('.container-table');
+    const containerFilter = document.getElementById("container-filter");
 
     searchInput.addEventListener("input", () => {
         const searchText = searchInput.value.trim().toLowerCase();
 
         containers.forEach(container => {
             const containerName = container.querySelector('.container-name').textContent.trim().toLowerCase();
-            const stockNames = container.querySelectorAll('tbody td:first-child'); // Selecting the first cell in each row (stock name)
+            const stockNames = container.querySelectorAll('tbody td:first-child');
 
-            let found = containerName.includes(searchText); // Check if the container name matches the search text
+            let found = containerName.includes(searchText);
 
             stockNames.forEach(stockName => {
                 const stockNameText = stockName.textContent.trim().toLowerCase();
                 if (stockNameText.includes(searchText)) {
-                    found = true; // If stock name matches the search text, set found to true
+                    found = true;
                 }
             });
 
             if (found) {
-                container.style.display = ""; // Show the container
+                container.style.display = "";
                 container.scrollIntoView({ behavior: 'smooth', block: 'start' });
             } else {
-                container.style.display = "none"; // Hide the container
+                container.style.display = "none";
             }
         });
     });
-</script>
 
-<script>
     const calculateTotals = () => {
         document.querySelectorAll('.table').forEach((table) => {
             const quantityCells = table.querySelectorAll('tbody td:nth-child(2)');
@@ -184,18 +210,40 @@
                 totalCubicMeters += parseFloat(cell.textContent) || 0;
             });
 
-            // Update total quantity and total cubic meters in the corresponding placeholders
             table.querySelector('.totals-row .total-quantity').textContent = totalQuantity;
             table.querySelector('.totals-row .total-cubic-meters').textContent = totalCubicMeters.toFixed(3);
         });
     };
 
-    // Call the calculateTotals function after the page is loaded
     document.addEventListener('DOMContentLoaded', calculateTotals);
+
+    document.querySelectorAll('.status-filter').forEach(filter => {
+        filter.addEventListener('change', (event) => {
+            const selectedStatus = event.target.value;
+            const table = event.target.closest('.filter-container').nextElementSibling;
+            const rows = table.querySelectorAll('.stock-row');
+
+            rows.forEach(row => {
+                if (selectedStatus === "" || row.getAttribute('data-status') === selectedStatus) {
+                    row.style.display = "";
+                } else {
+                    row.style.display = "none";
+                }
+            });
+        });
+    });
+
+    containerFilter.addEventListener('change', () => {
+        const selectedContainer = containerFilter.value;
+
+        containers.forEach(container => {
+            if (selectedContainer === "" || container.getAttribute('data-container') === selectedContainer) {
+                container.style.display = "";
+            } else {
+                container.style.display = "none";
+            }
+        });
+    });
 </script>
-
-
-
-
 
 {% endblock content %}
