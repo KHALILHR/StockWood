@@ -127,16 +127,7 @@ def all_stock(request):
     total_quantity = stock_list.aggregate(Sum('quantity'))['quantity__sum'] or 0
     total_cubic_meters = stock_list.aggregate(Sum('cubic_meter'))['cubic_meter__sum'] or 0
 
-    page = request.GET.get('page', 1)
-    paginator = Paginator(stock_list, 9999999999)  # Show 10 stocks per page
-
-    try:
-        stocks = paginator.page(page)
-    except PageNotAnInteger:
-        # If page is not an integer, deliver the first page.
-        stocks = paginator.page(1)
-    except EmptyPage:
-        # If page is out of range (e.g. 9999), deliver the last page of results.
-        stocks = paginator.page(paginator.num_pages)
+    # Pass the full list of stocks to the template without pagination
+    stocks = stock_list
 
     return render(request, 'all_stock.html', {'stocks': stocks, 'total_quantity': total_quantity, 'total_cubic_meters': total_cubic_meters})
