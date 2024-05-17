@@ -84,6 +84,13 @@ class SaleForm(forms.ModelForm):
         ('facture_bon_livraison', 'Facture and Bon de Livraison'),
         ('bon_de_livraison', 'Bon de Livraison'),
     ]
+    payment_method_list = [
+        ('cash', 'Espèces'),
+        ('check', 'paiement par chèque'),
+        ('credit_card', 'carte bancaire'),
+        ('bank_transfer', 'Virement bancaire'),
+    ]
+
 
     sale_type = forms.ChoiceField(
         choices=SALE_TYPE_CHOICES,
@@ -100,6 +107,12 @@ class SaleForm(forms.ModelForm):
         label='Time',
         widget=forms.DateTimeInput(attrs={'class': 'form-control', 'type': 'date'}),
     )
+    payment_methods = forms.ChoiceField(
+        choices=payment_method_list,
+        widget=forms.Select(attrs={'class': 'form-control'})
+    )
+
+
     class Meta:
         model = SaleBill
         fields = ['name', 'phone', 'address', 'email', 'gstin', 'sale_type', 'extra_options','time', 'numero_facture']

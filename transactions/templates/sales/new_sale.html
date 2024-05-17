@@ -42,9 +42,10 @@
             {{ form.numero_facture }}
         </div>
         <div class="form-group">
-            <label for="{{ form.name.id_for_label }}" class="panel-body-text">Nom De Client(e):</label>
+            <label for="{{ form.name.id_for_label }}" $ class="panel-body-text">Nom De Client(e):</label>
             {{ form.name }}
         </div>
+        
 
         <div class="form-row">
             <div class="form-group col-md-6">
@@ -63,6 +64,10 @@
         <div class="form-group">
             <label for="{{ form.gstin.id_for_label }}" class="panel-body-text">Matricule No:</label>
             {{ form.gstin }}
+        </div>
+        <div class="form-group">
+            <label for="{{ form.gstin.id_for_label }}" class="panel-body-text">Method de paiment:</label>
+            {{ form.payment_methods }}
         </div>
         <div class="form-group">
             <label for="{{ form.time.id_for_label }}" class="panel-body-text">Time:</label>

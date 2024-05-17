@@ -1,7 +1,21 @@
+from django.shortcuts import get_object_or_404
+from django.forms.models import inlineformset_factory
+from .forms import OfferDetailsForm
+from .models import Offer, OfferItem, OfferDetails, Client, Stock
+from .models import Stock, OfferDetails
+from django.shortcuts import render, redirect
+from .forms import OfferSearchForm  # Import your OfferSearchForm
+from django.shortcuts import render
+from .models import Offer
+from .models import Offer, OfferItem, Stock
+from .forms import OfferForm, OfferItemFormset
+from django.views import View
+from django.http import HttpResponseRedirect
+from django.db import transaction
 import math
 from django.shortcuts import render, redirect, get_object_or_404
 from django.views.generic import (
-    View, 
+    View,
     ListView,
     CreateView,
     UpdateView,
@@ -12,28 +26,27 @@ from django.contrib import messages
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from .models import (
     OfferDetails,
-    PurchaseBill, 
-    Supplier, 
+    PurchaseBill,
+    Supplier,
     PurchaseItem,
     PurchaseBillDetails,
-    SaleBill,  
+    SaleBill,
     SaleItem,
     SaleBillDetails
 )
 from .forms import (
-    SelectSupplierForm, 
+    SelectSupplierForm,
     PurchaseItemFormset,
-    PurchaseDetailsForm, 
-    SupplierForm, 
+    PurchaseDetailsForm,
+    SupplierForm,
     SaleForm,
     SaleItemFormset,
     SaleDetailsForm,
-    
+
 )
 from inventory.models import Stock
 from .models import SaleBill
 from django.urls import reverse_lazy
-
 
 
 # shows a lists of all suppliers
@@ -51,12 +64,12 @@ class SupplierCreateView(SuccessMessageMixin, CreateView):
     success_url = '/transactions/suppliers'
     success_message = "Supplier has been created successfully"
     template_name = "suppliers/edit_supplier.html"
-    
+
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context["title"] = 'New Supplier'
         context["savebtn"] = 'Add Supplier'
-        return context     
+        return context
 
 
 # used to update a supplier's info
@@ -66,7 +79,7 @@ class SupplierUpdateView(SuccessMessageMixin, UpdateView):
     success_url = '/transactions/suppliers'
     success_message = "Supplier details has been updated successfully"
     template_name = "suppliers/edit_supplier.html"
-    
+
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context["title"] = 'Edit Supplier'
@@ -82,12 +95,12 @@ class SupplierDeleteView(View):
 
     def get(self, request, pk):
         supplier = get_object_or_404(Supplier, pk=pk)
-        return render(request, self.template_name, {'object' : supplier})
+        return render(request, self.template_name, {'object': supplier})
 
-    def post(self, request, pk):  
+    def post(self, request, pk):
         supplier = get_object_or_404(Supplier, pk=pk)
         supplier.is_deleted = True
-        supplier.save()                                               
+        supplier.save()
         messages.success(request, self.success_message)
         return redirect('suppliers-list')
 
@@ -106,15 +119,13 @@ class SupplierView(View):
         except EmptyPage:
             bills = paginator.page(paginator.num_pages)
         context = {
-            'supplier'  : supplierobj,
-            'bills'     : bills
+            'supplier': supplierobj,
+            'bills': bills
         }
         return render(request, 'suppliers/supplier.html', context)
 
 
-
-
-# shows the list of bills of all purchases 
+# shows the list of bills of all purchases
 class PurchaseView(ListView):
     model = PurchaseBill
     template_name = "purchases/purchases_list.html"
@@ -132,7 +143,8 @@ class SelectSupplierView(View):
         form = self.form_class
         return render(request, self.template_name, {'form': form})
 
-    def post(self, request, *args, **kwargs):                                   # gets selected supplier and redirects to 'PurchaseCreateView' class
+    # gets selected supplier and redirects to 'PurchaseCreateView' class
+    def post(self, request, *args, **kwargs):
         form = self.form_class(request.POST)
         if form.is_valid():
             supplierid = request.POST.get("supplier")
@@ -142,34 +154,43 @@ class SelectSupplierView(View):
 
 
 # used to generate a bill object and save items
-class PurchaseCreateView(View):                                                 
+class PurchaseCreateView(View):
     template_name = 'purchases/new_purchase.html'
 
     def get(self, request, pk):
-        formset = PurchaseItemFormset(request.GET or None)                      # renders an empty formset
-        supplierobj = get_object_or_404(Supplier, pk=pk)                        # gets the supplier object
+        # renders an empty formset
+        formset = PurchaseItemFormset(request.GET or None)
+        # gets the supplier object
+        supplierobj = get_object_or_404(Supplier, pk=pk)
         context = {
-            'formset'   : formset,
-            'supplier'  : supplierobj,
+            'formset': formset,
+            'supplier': supplierobj,
         }                                                                       # sends the supplier and formset as context
         return render(request, self.template_name, context)
 
     def post(self, request, pk):
-        formset = PurchaseItemFormset(request.POST)                             # recieves a post method for the formset
-        supplierobj = get_object_or_404(Supplier, pk=pk)                        # gets the supplier object
+        # recieves a post method for the formset
+        formset = PurchaseItemFormset(request.POST)
+        # gets the supplier object
+        supplierobj = get_object_or_404(Supplier, pk=pk)
         if formset.is_valid():
             # saves bill
-            billobj = PurchaseBill(supplier=supplierobj)                        # a new object of class 'PurchaseBill' is created with supplier field set to 'supplierobj'
-            billobj.save()                                                      # saves object into the db
+            # a new object of class 'PurchaseBill' is created with supplier field set to 'supplierobj'
+            billobj = PurchaseBill(supplier=supplierobj)
+            # saves object into the db
+            billobj.save()
             # create bill details object
             billdetailsobj = PurchaseBillDetails(billno=billobj)
             billdetailsobj.save()
-            for form in formset:                                                # for loop to save each individual form as its own object
+            # for loop to save each individual form as its own object
+            for form in formset:
                 # false saves the item and links bill to the item
                 billitem = form.save(commit=False)
-                billitem.billno = billobj                                       # links the bill object to the items
+                # links the bill object to the items
+                billitem.billno = billobj
                 # gets the stock item
-                stock = get_object_or_404(Stock, name=billitem.stock.name)       # gets the item
+                stock = get_object_or_404(
+                    Stock, name=billitem.stock.name)       # gets the item
                 # calculates the total price
                 billitem.totalprice = billitem.perprice * billitem.quantity
                 # updates quantity in stock db
@@ -177,12 +198,13 @@ class PurchaseCreateView(View):
                 # saves bill item and stock
                 stock.save()
                 billitem.save()
-            messages.success(request, "Purchased items have been registered successfully")
+            messages.success(
+                request, "Purchased items have been registered successfully")
             return redirect('purchase-bill', billno=billobj.billno)
         formset = PurchaseItemFormset(request.GET or None)
         context = {
-            'formset'   : formset,
-            'supplier'  : supplierobj
+            'formset': formset,
+            'supplier': supplierobj
         }
         return render(request, self.template_name, context)
 
@@ -192,7 +214,7 @@ class PurchaseDeleteView(SuccessMessageMixin, DeleteView):
     model = PurchaseBill
     template_name = "purchases/delete_purchase.html"
     success_url = '/transactions/purchases'
-    
+
     def delete(self, *args, **kwargs):
         self.object = self.get_object()
         items = PurchaseItem.objects.filter(billno=self.object.billno)
@@ -201,13 +223,12 @@ class PurchaseDeleteView(SuccessMessageMixin, DeleteView):
             if stock.is_deleted == False:
                 stock.quantity -= item.quantity
                 stock.save()
-        messages.success(self.request, "Purchase bill has been deleted successfully")
+        messages.success(
+            self.request, "Purchase bill has been deleted successfully")
         return super(PurchaseDeleteView, self).delete(*args, **kwargs)
 
 
-
-
-# shows the list of bills of all sales 
+# shows the list of bills of all sales
 class SaleView(ListView):
     model = SaleBill
     template_name = "sales/sales_list.html"
@@ -218,7 +239,7 @@ class SaleView(ListView):
     def get_queryset(self):
         queryset = super().get_queryset()
         search_name = self.request.GET.get('search_name', '')
-        
+
         # Filter sales based on the search_name
         if search_name:
             queryset = queryset.filter(name__icontains=search_name)
@@ -226,11 +247,8 @@ class SaleView(ListView):
         return queryset
 
 
-
 # used to generate a bill object and save items
-from django.shortcuts import redirect
 
-from django.shortcuts import redirect
 
 class SaleCreateView(View):
     template_name = 'sales/new_sale.html'
@@ -258,7 +276,22 @@ class SaleCreateView(View):
         stock_error = False  # Flag to check for stock errors
 
         if form.is_valid() and formset.is_valid():
+            # Save Client information
+            client = Client(
+                name=form.cleaned_data['name'],
+                phone=form.cleaned_data['phone'],
+                address=form.cleaned_data['address'],
+                email=form.cleaned_data['email'],
+                gstin=form.cleaned_data['gstin'],
+                payment_method=form.cleaned_data['payment_methods'],
+                is_salebill = True,
+                is_offer = False,
+
+            )
+            client.save()
+
             billobj = form.save(commit=False)
+            billobj.client = client
             billobj.save()
 
             for form_item in formset:
@@ -304,12 +337,12 @@ class SaleCreateView(View):
                 billobj.save()  # Save the Sale object along with SaleBillDetails
                 billdetailsobj = SaleBillDetails(billno=billobj)
                 billdetailsobj.save()
-                messages.success(request, "Sold items have been registered successfully")
+                messages.success(
+                    request, "Sold items have been registered successfully")
                 return redirect('sale-bill', billno=billobj.billno)
 
         return render(request, self.template_name, context)
 
-from django.forms.models import inlineformset_factory
 
 class SalleUpdateView(SuccessMessageMixin, UpdateView):
     model = SaleBill
@@ -331,13 +364,15 @@ class SalleUpdateView(SuccessMessageMixin, UpdateView):
         SaleItemFormSet = inlineformset_factory(
             SaleBill,
             SaleItem,
-            fields=('stock', 'cubic_meter', 'perprice', 'quantity'),  # Fields to display in the formset
+            # Fields to display in the formset
+            fields=('stock', 'cubic_meter', 'perprice', 'quantity'),
             extra=0,  # Number of extra forms to display
         )
 
         # If POST data is present, bind the formset with POST data and instance
         if self.request.method == 'POST':
-            formset = SaleItemFormSet(self.request.POST, instance=sale_bill_instance)
+            formset = SaleItemFormSet(
+                self.request.POST, instance=sale_bill_instance)
         else:
             # If no POST data, just initialize the formset with the instance
             formset = SaleItemFormSet(instance=sale_bill_instance)
@@ -360,25 +395,24 @@ class SalleUpdateView(SuccessMessageMixin, UpdateView):
 
 
 # used to delete a bill object
-from django.db import transaction
-from django.http import HttpResponseRedirect
+
 
 class SaleDeleteView(SuccessMessageMixin, DeleteView):
     model = SaleBill
     template_name = "sales/delete_sale.html"
     success_url = '/transactions/sales'
-    
+
     @transaction.atomic
     def delete(self, *args, **kwargs):
         self.object = self.get_object()
-        
+
         # Retrieve all related sale items associated with the sale bill being deleted
         items = SaleItem.objects.filter(billno=self.object.billno)
-        
+
         # Loop through each related sale item
         for item in items:
             stock = Stock.objects.get(name=item.stock.name)
-            
+
             # Restore the stock quantity or cubic meter based on the sale type
             if self.object.sale_type == 'cubic_meter':
                 stock.cubic_meter += item.cubic_meter
@@ -389,16 +423,14 @@ class SaleDeleteView(SuccessMessageMixin, DeleteView):
                 stock.cubic_meter += item.cubic_meter
             # Save the updated stock object
             stock.save()
-        
+
         # Delete the sale bill object
         self.object.delete()
-        
-        messages.success(self.request, "Sale bill has been deleted successfully")
-        
+
+        messages.success(
+            self.request, "Sale bill has been deleted successfully")
+
         return HttpResponseRedirect(self.get_success_url())
-
-
-
 
 
 # used to display the purchase bill object
@@ -409,10 +441,10 @@ class PurchaseBillView(View):
 
     def get(self, request, billno):
         context = {
-            'bill'          : PurchaseBill.objects.get(billno=billno),
-            'items'         : PurchaseItem.objects.filter(billno=billno),
-            'billdetails'   : PurchaseBillDetails.objects.get(billno=billno),
-            'bill_base'     : self.bill_base,
+            'bill': PurchaseBill.objects.get(billno=billno),
+            'items': PurchaseItem.objects.filter(billno=billno),
+            'billdetails': PurchaseBillDetails.objects.get(billno=billno),
+            'bill_base': self.bill_base,
         }
         return render(request, self.template_name, context)
 
@@ -420,8 +452,8 @@ class PurchaseBillView(View):
         form = PurchaseDetailsForm(request.POST)
         if form.is_valid():
             billdetailsobj = PurchaseBillDetails.objects.get(billno=billno)
-            
-            billdetailsobj.eway = request.POST.get("eway")    
+
+            billdetailsobj.eway = request.POST.get("eway")
             billdetailsobj.veh = request.POST.get("veh")
             billdetailsobj.destination = request.POST.get("destination")
             billdetailsobj.po = request.POST.get("po")
@@ -433,12 +465,13 @@ class PurchaseBillView(View):
             billdetailsobj.total = request.POST.get("total")
 
             billdetailsobj.save()
-            messages.success(request, "Bill details have been modified successfully")
+            messages.success(
+                request, "Bill details have been modified successfully")
         context = {
-            'bill'          : PurchaseBill.objects.get(billno=billno),
-            'items'         : PurchaseItem.objects.filter(billno=billno),
-            'billdetails'   : PurchaseBillDetails.objects.get(billno=billno),
-            'bill_base'     : self.bill_base,
+            'bill': PurchaseBill.objects.get(billno=billno),
+            'items': PurchaseItem.objects.filter(billno=billno),
+            'billdetails': PurchaseBillDetails.objects.get(billno=billno),
+            'bill_base': self.bill_base,
         }
         return render(request, self.template_name, context)
 
@@ -448,13 +481,13 @@ class SaleBillView(View):
     model = SaleBill
     template_name = "bill/sale_bill.html"
     bill_base = "bill/bill_base.html"
-    
+
     def get(self, request, billno):
         context = {
-            'bill'          : SaleBill.objects.get(billno=billno),
-            'items'         : SaleItem.objects.filter(billno=billno),
-            'billdetails'   : SaleBillDetails.objects.get(billno=billno),
-            'bill_base'     : self.bill_base,
+            'bill': SaleBill.objects.get(billno=billno),
+            'items': SaleItem.objects.filter(billno=billno),
+            'billdetails': SaleBillDetails.objects.get(billno=billno),
+            'bill_base': self.bill_base,
         }
         return render(request, self.template_name, context)
 
@@ -462,8 +495,8 @@ class SaleBillView(View):
         form = SaleDetailsForm(request.POST)
         if form.is_valid():
             billdetailsobj = SaleBillDetails.objects.get(billno=billno)
-            
-            billdetailsobj.eway = request.POST.get("eway")    
+
+            billdetailsobj.eway = request.POST.get("eway")
             billdetailsobj.veh = request.POST.get("veh")
             billdetailsobj.destination = request.POST.get("destination")
             billdetailsobj.po = request.POST.get("po")
@@ -475,39 +508,38 @@ class SaleBillView(View):
             billdetailsobj.total = request.POST.get("total")
 
             billdetailsobj.save()
-            messages.success(request, "Bill details have been modified successfully")
+            messages.success(
+                request, "Bill details have been modified successfully")
         context = {
-            'bill'          : SaleBill.objects.get(billno=billno),
-            'items'         : SaleItem.objects.filter(billno=billno),
-            'billdetails'   : SaleBillDetails.objects.get(billno=billno),
-            'bill_base'     : self.bill_base,
+            'bill': SaleBill.objects.get(billno=billno),
+            'items': SaleItem.objects.filter(billno=billno),
+            'billdetails': SaleBillDetails.objects.get(billno=billno),
+            'bill_base': self.bill_base,
         }
         return render(request, self.template_name, context)
-
-
 
 
 class FactureView(View):
     model = SaleBill  # Assuming that FactureView uses SaleBill model; you can replace it with the appropriate model if needed
     template_name = 'bill/facture.html'
     bill_base = "bill/bill_base.html"
-    
+
     def get(self, request, billno):
         context = {
-            'bill'          : self.model.objects.get(billno=billno),
-            'items'         : SaleItem.objects.filter(billno=billno),
-            'billdetails'   : SaleBillDetails.objects.get(billno=billno),
-            'bill_base'     : self.bill_base,
+            'bill': self.model.objects.get(billno=billno),
+            'items': SaleItem.objects.filter(billno=billno),
+            'billdetails': SaleBillDetails.objects.get(billno=billno),
+            'bill_base': self.bill_base,
         }
-        
+
         return render(request, self.template_name, context)
 
     def post(self, request, billno):
         form = SaleDetailsForm(request.POST)
         if form.is_valid():
             billdetailsobj = SaleBillDetails.objects.get(billno=billno)
-            
-            billdetailsobj.eway = request.POST.get("eway")    
+
+            billdetailsobj.eway = request.POST.get("eway")
             billdetailsobj.veh = request.POST.get("veh")
             billdetailsobj.destination = request.POST.get("destination")
             billdetailsobj.po = request.POST.get("po")
@@ -517,41 +549,28 @@ class FactureView(View):
             billdetailsobj.cess = request.POST.get("cess")
             billdetailsobj.tcs = request.POST.get("tcs")
             billdetailsobj.total = request.POST.get("total")
-            
-            
+
             billdetailsobj.save()
-            messages.success(request, "Bill details have been modified successfully")
+            messages.success(
+                request, "Bill details have been modified successfully")
         context = {
-            'bill'          : self.model.objects.get(billno=billno),
-            'items'         : SaleItem.objects.filter(billno=billno),
-            'billdetails'   : SaleBillDetails.objects.get(billno=billno),
-            'bill_base'     : self.bill_base,
+            'bill': self.model.objects.get(billno=billno),
+            'items': SaleItem.objects.filter(billno=billno),
+            'billdetails': SaleBillDetails.objects.get(billno=billno),
+            'bill_base': self.bill_base,
         }
         return render(request, self.template_name, context)
 
-
-
-from django.shortcuts import render, redirect, get_object_or_404
-from django.views import View
-from .forms import OfferForm, OfferItemFormset
-from .models import Offer, OfferItem, Stock
-from django.contrib import messages
-from .models import Offer
-
-from django.shortcuts import render
-from django.views import View
-from .models import Offer
-from .forms import OfferSearchForm  # Import your OfferSearchForm
 
 class OfferListView(View):
     template_name = 'sales/offer_list.html'
 
     def get(self, request):
         form = OfferSearchForm(request.GET)
-        
+
         if form.is_valid():
             customer_name = form.cleaned_data.get('customer_name')
-            
+
             # Filter the queryset based on the customer name
             if customer_name:
                 offers = Offer.objects.filter(name__icontains=customer_name)
@@ -567,14 +586,7 @@ class OfferListView(View):
 
         context = {'offers': reversed_offers, 'form': form}
         return render(request, self.template_name, context)
-       
 
-from django.shortcuts import render, redirect
-from django.views import View
-from .forms import OfferForm, OfferItemFormset
-from .models import Stock, OfferDetails
-from django.contrib import messages
-import math
 
 class OfferCreateView(View):
     template_name = 'sales/new_offre.html'
@@ -607,13 +619,14 @@ class OfferCreateView(View):
 
             for form_item in formset:
                 billitem = form_item.save(commit=False)
-                billitem.offer_no = billobj  # Assign the Offer object to the OfferItem's offer_no field
+                # Assign the Offer object to the OfferItem's offer_no field
+                billitem.offer_no = billobj
 
                 # Update the total_price field with the calculated total price
                 cubic_meter = form_item.cleaned_data.get('cubic_meter')
                 quantity = form_item.cleaned_data.get('quantity')
                 per_price = form_item.cleaned_data.get('per_price')
-                
+
                 sale_type = form.cleaned_data.get('sale_type')
 
                 if sale_type == 'quantity' and not math.isnan(quantity):
@@ -629,28 +642,25 @@ class OfferCreateView(View):
 
                 billitem.save()
 
-            messages.success(request, "Les éléments de l'offre ont été enregistrés avec succès")
+            messages.success(
+                request, "Les éléments de l'offre ont été enregistrés avec succès")
             return redirect('offer-bill', offer_no=billobj.offer_no)
 
         # If the form or formset is not valid, return the response
         return render(request, self.template_name, context)
 
 
-from django.shortcuts import render, redirect
-from django.views import View
-from .models import Offer, OfferItem, OfferDetails
-from .forms import OfferDetailsForm
 class OfferBillView(View):
     model = Offer
     template_name = "bill/offre_bill.html"
     bill_base = "bill/bill_base.html"
-    
+
     def get(self, request, offer_no):
         context = {
-            'offer'         : Offer.objects.get(offer_no=offer_no),
-            'items'         : OfferItem.objects.filter(offer_no=offer_no),
-            'offerdetails'   : OfferDetails.objects.get(offer_no=offer_no),
-            'bill_base'     : self.bill_base,
+            'offer': Offer.objects.get(offer_no=offer_no),
+            'items': OfferItem.objects.filter(offer_no=offer_no),
+            'offerdetails': OfferDetails.objects.get(offer_no=offer_no),
+            'bill_base': self.bill_base,
         }
         return render(request, self.template_name, context)
 
@@ -658,8 +668,8 @@ class OfferBillView(View):
         form = OfferDetailsForm(request.POST)
         if form.is_valid():
             offer_details_obj = OfferDetails.objects.get(offer_no=offer_no)
-            
-            offer_details_obj.eway = request.POST.get("eway")    
+
+            offer_details_obj.eway = request.POST.get("eway")
             offer_details_obj.veh = request.POST.get("veh")
             offer_details_obj.destination = request.POST.get("destination")
             offer_details_obj.po = request.POST.get("po")
@@ -671,17 +681,17 @@ class OfferBillView(View):
             offer_details_obj.total = request.POST.get("total")
 
             offer_details_obj.save()
-            
-            messages.success(request, "Bill details have been modified successfully")
+
+            messages.success(
+                request, "Bill details have been modified successfully")
         context = {
-            'offer'         : Offer.objects.get(offer_no=offer_no),
-            'items'         : OfferItem.objects.filter(offer_no=offer_no),
-            'offerdetails'   : OfferDetails.objects.get(offer_no=offer_no),
-            'bill_base'     : self.bill_base,
+            'offer': Offer.objects.get(offer_no=offer_no),
+            'items': OfferItem.objects.filter(offer_no=offer_no),
+            'offerdetails': OfferDetails.objects.get(offer_no=offer_no),
+            'bill_base': self.bill_base,
         }
         return render(request, self.template_name, context)
 
-from django.shortcuts import get_object_or_404
 
 def delete_offer(request, offer_id):
     offer = get_object_or_404(Offer, pk=offer_id)
